@@ -1,0 +1,40 @@
+<svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Connection Paths (Subtle Dotted Lines) -->
+  <path d="M160 150 Q130 180 100 170" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.2"/>
+  <path d="M240 150 Q270 120 300 130" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.2"/>
+  
+  <!-- Central Experiment Hub (Flask + K8s Hexagon Integration) -->
+  <g transform="translate(170, 110)">
+    <!-- Faint Outer Hexagon -->
+    <path d="M30 0L56 15V45L30 60L4 45V15L30 0Z" fill="#3B82F6" fill-opacity="0.03" stroke="#3B82F6" stroke-width="1" stroke-dasharray="2 2"/>
+    
+    <!-- Laboratory Flask -->
+    <path d="M24 15H36V28L44 50H16L24 28V15Z" fill="#3B82F6" fill-opacity="0.1" stroke="#3B82F6" stroke-width="2"/>
+    <path d="M20 40H40L42 45H18L20 40Z" fill="#3B82F6" opacity="0.4"/>
+    
+    <!-- Hexagon Spokes -->
+    <path d="M30 0V10M56 15L48 20M56 45L48 40M30 60V50M4 45L12 40M4 15L12 20" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- Kubernetes Resource Blocks (Floating) -->
+  
+  <!-- Deployment Box (Top Right) -->
+  <g transform="translate(290, 70)">
+    <rect width="50" height="40" rx="6" fill="#64748B" fill-opacity="0.05" stroke="#64748B" stroke-width="1.5"/>
+    <rect x="10" y="10" width="15" height="3" rx="1.5" fill="#64748B" opacity="0.3"/>
+    <rect x="10" y="18" width="30" height="3" rx="1.5" fill="#64748B" opacity="0.2"/>
+    <rect x="10" y="26" width="20" height="3" rx="1.5" fill="#64748B" opacity="0.2"/>
+  </g>
+  
+  <!-- Pod Cube (Bottom Left) -->
+  <g transform="translate(60, 160)">
+    <path d="M20 0 L40 10 V30 L20 40 L0 30 V10 L20 0Z" fill="#3B82F6" fill-opacity="0.08" stroke="#3B82F6" stroke-width="1.5"/>
+    <path d="M20 0 V20 L40 30 M20 20 L0 30" stroke="#3B82F6" stroke-width="1.5" opacity="0.3"/>
+  </g>
+  
+  <!-- Small Floating Nodes -->
+  <circle cx="100" cy="80" r="4" fill="#3B82F6" opacity="0.2"/>
+  <rect x="320" y="180" width="8" height="8" rx="2" transform="rotate(45 320 180)" fill="#64748B" opacity="0.15"/>
+  <circle cx="200" cy="230" r="3" fill="#64748B" opacity="0.1"/>
+  <path d="M360 120 L368 128 M368 120 L360 128" stroke="#64748B" stroke-width="1.5" opacity="0.2"/>
+</svg>

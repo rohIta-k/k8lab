@@ -1,0 +1,80 @@
+:root {
+
+  /* ---------- Typography ---------- */
+
+  --font-family:
+    "Inter",
+    "Geist",
+    "SF Pro Display",
+    sans-serif;
+
+  /* ---------- Primary Colors ---------- */
+
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: #60a5fa;
+
+  /* ---------- Background ---------- */
+
+  --background-primary: #0b1220;
+  --background-secondary: #111827;
+  --background-sidebar: #0f172a;
+  --background-card: #182132;
+  --background-hover: #1f2937;
+
+  /* ---------- Borders ---------- */
+
+  --border-color: #273244;
+
+  /* ---------- Text ---------- */
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* ---------- Status ---------- */
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
+
+  /* ---------- Shadows ---------- */
+
+  --shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.25);
+
+  --shadow-md:
+    0 6px 16px rgba(0, 0, 0, 0.28);
+
+  --shadow-lg:
+    0 12px 28px rgba(0, 0, 0, 0.32);
+
+  /* ---------- Radius ---------- */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* ---------- Layout ---------- */
+
+  --sidebar-width: 240px;
+
+  --topbar-height: 64px;
+
+  --content-padding: 24px;
+
+  --card-padding: 20px;
+
+  --section-gap: 24px;
+
+  /* ---------- Animation ---------- */
+
+  --transition-fast: 150ms ease;
+
+  --transition-normal: 250ms ease;
+
+  --transition-slow: 350ms ease;
+
+}

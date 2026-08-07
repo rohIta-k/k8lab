@@ -1,0 +1,10 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Kubernetes-inspired Hexagonal Outline -->
+  <path d="M50 10L84.64 30V70L50 90L15.36 70V30L50 10Z" stroke="#3B82F6" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+  
+  <!-- Integrated Laboratory Flask -->
+  <path d="M42 38H58V44L68 70H32L42 44V38Z" fill="#3B82F6"/>
+  
+  <!-- Subtle Internal Spokes (Minimal K8s Wheel Reference) -->
+  <path d="M50 10V22M84.64 30L74.25 36M84.64 70L74.25 64M50 90V78M15.36 70L25.75 64M15.36 30L25.75 36" stroke="#3B82F6" stroke-width="6" stroke-linecap="round"/>
+</svg>

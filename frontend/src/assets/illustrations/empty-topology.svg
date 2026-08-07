@@ -1,0 +1,40 @@
+<svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Central Cluster Hub -->
+  <g transform="translate(170, 120)">
+    <!-- Outer Hexagon Frame -->
+    <path d="M30 0L56 15V45L30 60L4 45V15L30 0Z" fill="#3B82F6" fill-opacity="0.05" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <!-- Inner Core -->
+    <path d="M30 12L46 21V39L30 48L14 39V21L30 12Z" fill="#3B82F6" fill-opacity="0.15" stroke="#3B82F6" stroke-width="2"/>
+    <circle cx="30" cy="30" r="6" fill="#3B82F6"/>
+  </g>
+
+  <!-- Disconnected Nodes (Geometric Shapes) -->
+  
+  <!-- Top Right Node -->
+  <g transform="translate(280, 60)">
+    <rect width="40" height="40" rx="10" fill="#64748B" fill-opacity="0.1" stroke="#64748B" stroke-width="1.5"/>
+    <circle cx="20" cy="20" r="4" fill="#64748B" opacity="0.4"/>
+  </g>
+  
+  <!-- Bottom Left Node -->
+  <g transform="translate(80, 180)">
+    <path d="M20 0L38 10V30L20 40L2 30V10L20 0Z" fill="#3B82F6" fill-opacity="0.05" stroke="#3B82F6" stroke-width="1.5" opacity="0.6"/>
+    <rect x="15" y="15" width="10" height="10" rx="2" fill="#3B82F6" opacity="0.3"/>
+  </g>
+  
+  <!-- Far Right Node -->
+  <g transform="translate(320, 200)">
+    <circle cx="15" cy="15" r="15" fill="#64748B" fill-opacity="0.05" stroke="#64748B" stroke-width="1.5" stroke-dasharray="2 2"/>
+    <rect x="11" y="11" width="8" height="8" rx="1" fill="#64748B" opacity="0.4"/>
+  </g>
+
+  <!-- Faded/Subtle Network Connections -->
+  <path d="M170 150 Q120 160 100 180" stroke="#64748B" stroke-width="1" stroke-dasharray="4 4" opacity="0.2"/>
+  <path d="M230 150 Q260 110 280 100" stroke="#64748B" stroke-width="1" stroke-dasharray="4 4" opacity="0.2"/>
+  <path d="M230 170 Q280 190 320 215" stroke="#64748B" stroke-width="1" stroke-dasharray="4 4" opacity="0.2"/>
+
+  <!-- Floating Geometric Particles -->
+  <circle cx="120" cy="80" r="3" fill="#3B82F6" opacity="0.2"/>
+  <rect x="350" y="120" width="6" height="6" rx="1" transform="rotate(45 350 120)" fill="#64748B" opacity="0.15"/>
+  <path d="M60 100 L68 108 M68 100 L60 108" stroke="#64748B" stroke-width="1.5" opacity="0.2"/>
+</svg>

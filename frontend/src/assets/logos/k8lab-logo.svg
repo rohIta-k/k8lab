@@ -1,0 +1,19 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- K8Lab Horizontal Logo: Pure Vector SVG -->
+  <!-- Icon: Merged Kubernetes Hexagon + Laboratory Flask -->
+  <g transform="translate(10, 10)">
+    <!-- Outer Hexagonal Frame -->
+    <path d="M20 2L37.32 12V32L20 42L2.68 32V12L20 2Z" stroke="#3B82F6" stroke-width="3.5" stroke-linejoin="round"/>
+    
+    <!-- Laboratory Flask (Integrated/Fused) -->
+    <path d="M20 14L20 16M16 16H24M18 16V24L12 34H28L22 24V16H18Z" fill="#3B82F6"/>
+    
+    <!-- Kubernetes Wheel Spokes (Symmetrical) -->
+    <path d="M20 2V8M37.32 12L32.12 15M37.32 32L32.12 29M20 42V36M2.68 32L7.88 29M2.68 12L7.88 15" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Typography: K8Lab (Geist/Inter Inspired) -->
+  <text x="64" y="40" fill="#F8FAFC" style="font-family: 'Geist', 'Inter', sans-serif; font-size: 32px; letter-spacing: -0.04em;">
+    <tspan font-weight="800" fill="#3B82F6">K8</tspan><tspan font-weight="500">Lab</tspan>
+  </text>
+</svg>
