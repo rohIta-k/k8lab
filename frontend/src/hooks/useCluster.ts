@@ -1,17 +1,21 @@
 import { useClusterStore } from "../store";
 
 export function useCluster() {
-  const {
-    clusters,
-    currentCluster,
-    setCurrentCluster,
-    refreshClusters,
-  } = useClusterStore((state) => ({
-    clusters: state.clusters,
-    currentCluster: state.currentCluster,
-    setCurrentCluster: state.setCurrentCluster,
-    refreshClusters: state.refreshClusters,
-  }));
+  const clusters = useClusterStore(
+    (state) => state.clusters
+  );
+
+  const currentCluster = useClusterStore(
+    (state) => state.currentCluster
+  );
+
+  const setCurrentCluster = useClusterStore(
+    (state) => state.setCurrentCluster
+  );
+
+  const refreshClusters = useClusterStore(
+    (state) => state.refreshClusters
+  );
 
   return {
     clusters,

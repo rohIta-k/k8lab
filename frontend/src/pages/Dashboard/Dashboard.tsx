@@ -1,25 +1,27 @@
-import PageHeader from "../../components/layout/PageHeader";
-
 import {
   DashboardStats,
   ClusterHealth,
   RecentActivity,
   QuickActions,
+  ClusterSelector
 } from "../../components/dashboard";
 
 export default function Dashboard() {
+
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Dashboard"
-        description="Overview of your Kubernetes cluster."
-      />
+      <ClusterSelector />
 
       <DashboardStats />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ClusterHealth />
-        <RecentActivity />
+      <div className="grid gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <ClusterHealth />
+        </div>
+
+        <div className="lg:col-span-8">
+          <RecentActivity />
+        </div>
       </div>
 
       <QuickActions />

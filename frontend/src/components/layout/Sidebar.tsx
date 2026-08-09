@@ -1,52 +1,41 @@
-import clsx from "clsx";
-
 import { SIDEBAR_ITEMS } from "../../constants/navigation";
-
-import { useUIStore } from "../../store";
-
-import ClusterSelector from "./ClusterSelector";
 import SidebarItem from "./SidebarItem";
+
 import logo from "../../assets/logos/k8lab-icon.svg";
 
 export default function Sidebar() {
-  const { sidebarCollapsed } = useUIStore((state) => ({
-    sidebarCollapsed: state.sidebarCollapsed,
-  }));
-
   return (
     <aside
-      className={clsx(
-        "flex h-screen flex-col border-r border-[var(--border-color)] bg-[var(--background-sidebar)] transition-all duration-300",
-        sidebarCollapsed
-          ? "w-20"
-          : "w-[var(--sidebar-width)]"
-      )}
+      className="flex h-full flex-col"
+      style={{
+        width: "var(--sidebar-width)",
+        borderRight: "1px solid var(--border-color)",
+        background:
+          "linear-gradient(180deg, rgba(5, 9, 20, 0.98) 0%, rgba(10, 16, 32, 0.98) 100%)",
+        boxShadow: "inset -1px 0 0 rgba(255, 255, 255, 0.04)",
+        padding: "24px 16px",
+      }}
     >
-      <div className="flex items-center gap-3 border-b border-[var(--border-color)] px-6 py-5">
+      {/* Logo / Header */}
+      <div className="mb-8 flex items-center gap-3 px-2">
         <img
           src={logo}
           alt="K8Lab"
-          className="h-9 w-9"
+          className="h-10 w-10"
         />
 
-        {!sidebarCollapsed && (
-          <div>
-            <h1 className="text-lg font-bold text-[var(--text-primary)]">
-              K8Lab
-            </h1>
-
-            <p className="text-xs text-[var(--text-muted)]">
-              Kubernetes Playground
-            </p>
-          </div>
-        )}
+        <div>
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: "var(--text-primary)" }}
+          >
+            K8Lab
+          </h1>
+        </div>
       </div>
 
-      <div className="border-b border-[var(--border-color)] p-4">
-        <ClusterSelector />
-      </div>
-
-      <nav className="flex flex-1 flex-col gap-2 p-4">
+      {/* Navigation */}
+      <nav className="flex flex-1 flex-col gap-1">
         {SIDEBAR_ITEMS.map((item) => (
           <SidebarItem
             key={item.id}

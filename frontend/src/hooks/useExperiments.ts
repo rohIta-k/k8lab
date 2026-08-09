@@ -1,21 +1,32 @@
 import { useExperimentStore } from "../store";
 
 export function useExperiments() {
-  const {
-    experiments,
-    selectedExperiment,
-    experimentState,
-    setSelectedExperiment,
-    setExperimentState,
-    resetExperiment,
-  } = useExperimentStore((state) => ({
-    experiments: state.experiments,
-    selectedExperiment: state.selectedExperiment,
-    experimentState: state.experimentState,
-    setSelectedExperiment: state.setSelectedExperiment,
-    setExperimentState: state.setExperimentState,
-    resetExperiment: state.resetExperiment,
-  }));
+  const experiments = useExperimentStore(
+    (state) => state.experiments
+  );
+
+  const selectedExperiment = useExperimentStore(
+    (state) => state.selectedExperiment
+  );
+
+  const experimentState = useExperimentStore(
+    (state) => state.experimentState
+  );
+
+  const setSelectedExperiment =
+    useExperimentStore(
+      (state) => state.setSelectedExperiment
+    );
+
+  const setExperimentState =
+    useExperimentStore(
+      (state) => state.setExperimentState
+    );
+
+  const resetExperiment =
+    useExperimentStore(
+      (state) => state.resetExperiment
+    );
 
   return {
     experiments,

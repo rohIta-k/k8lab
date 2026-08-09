@@ -21,11 +21,14 @@
   /* Background */
   /* -------------------------------------------------------------------------- */
 
-  --background-primary: #0b1220;
-  --background-secondary: #111827;
-  --background-sidebar: #0f172a;
-  --background-card: #182132;
-  --background-hover: #1f2937;
+  --background-page: #050914;
+  --background-primary: #0a1020;
+  --background-secondary: #0f172a;
+  --background-sidebar: #0d1424;
+  --background-card: #151f31;
+  --background-elevated: #1a2538;
+  --background-hover: #202c42;
+  --background-shell: rgba(9, 14, 28, 0.88);
 
   /* -------------------------------------------------------------------------- */
   /* Borders */
@@ -91,12 +94,12 @@
   /* Layout */
   /* -------------------------------------------------------------------------- */
 
-  --sidebar-width: 240px;
+  --sidebar-width: 270px;
   --topbar-height: 64px;
-
   --content-padding: 24px;
   --card-padding: 20px;
   --section-gap: 24px;
+  --shell-padding: 24px;
 
   /* -------------------------------------------------------------------------- */
   /* Animation */

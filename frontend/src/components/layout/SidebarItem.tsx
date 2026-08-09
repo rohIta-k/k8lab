@@ -7,9 +7,7 @@ interface SidebarItemProps {
   item: NavigationItem;
 }
 
-export default function SidebarItem({
-  item,
-}: SidebarItemProps) {
+export default function SidebarItem({ item }: SidebarItemProps) {
   const Icon = item.icon;
 
   return (
@@ -18,14 +16,17 @@ export default function SidebarItem({
       end={item.path === "/"}
       className={({ isActive }) =>
         clsx(
-          "flex items-center gap-3 rounded-[var(--radius-md)] px-4 py-3 text-sm font-medium transition-all duration-200",
+          "flex items-center gap-3 rounded-md px-4 py-3 text-[15px] font-medium transition-colors",
           isActive
-            ? "bg-[var(--primary)] text-white shadow-[var(--shadow-sm)]"
-            : "text-[var(--text-secondary)] hover:bg-[var(--background-hover)] hover:text-[var(--text-primary)]"
+            ? "bg-(--primary)/35 text-(--text-primary) shadow-[0_8px_20px_rgba(59,130,246,0.15)]"
+            : "text-(--text-secondary) hover:bg-(--background-hover) hover:text-(--text-primary)"
         )
       }
     >
-      <Icon size={18} />
+      <Icon
+        size={18}
+        strokeWidth={1.8}
+      />
 
       <span>{item.label}</span>
     </NavLink>

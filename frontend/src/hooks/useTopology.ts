@@ -1,23 +1,33 @@
 import { useTopologyStore } from "../store";
 
 export function useTopology() {
-  const {
-    topology,
-    selection,
-    viewport,
-    setSelectedNode,
-    setSelectedEdge,
-    setZoom,
-    resetSelection,
-  } = useTopologyStore((state) => ({
-    topology: state.topology,
-    selection: state.selection,
-    viewport: state.viewport,
-    setSelectedNode: state.setSelectedNode,
-    setSelectedEdge: state.setSelectedEdge,
-    setZoom: state.setZoom,
-    resetSelection: state.resetSelection,
-  }));
+  const topology = useTopologyStore(
+    (state) => state.topology
+  );
+
+  const selection = useTopologyStore(
+    (state) => state.selection
+  );
+
+  const viewport = useTopologyStore(
+    (state) => state.viewport
+  );
+
+  const setSelectedNode = useTopologyStore(
+    (state) => state.setSelectedNode
+  );
+
+  const setSelectedEdge = useTopologyStore(
+    (state) => state.setSelectedEdge
+  );
+
+  const setZoom = useTopologyStore(
+    (state) => state.setZoom
+  );
+
+  const resetSelection = useTopologyStore(
+    (state) => state.resetSelection
+  );
 
   return {
     topology,

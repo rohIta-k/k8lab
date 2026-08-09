@@ -46,14 +46,14 @@ export default function StatCard({
   const currentColor = iconColors[variant];
 
   return (
-    <Card className="transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-md)]">
-      <div className="flex items-start justify-between">
+    <Card className="min-h-[122px] transition-all duration-200 hover:-translate-y-1">
+      <div className="flex h-full items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-[var(--text-secondary)]">
+          <p className="text-m text-[var(--text-secondary)]">
             {title}
           </p>
 
-          <h2 className="mt-2 text-3xl font-bold text-[var(--text-primary)]">
+          <h2 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--text-primary)]">
             {value}
           </h2>
 
@@ -65,13 +65,13 @@ export default function StatCard({
         </div>
 
         <div
-          className="flex h-12 w-12 items-center justify-center rounded-xl"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/5"
           style={{
-            backgroundColor: currentColor.background,
+            backgroundColor: "rgba(255,255,255,0.03)",
           }}
         >
           <Icon
-            size={22}
+            size={20}
             style={{
               color: currentColor.color,
             }}

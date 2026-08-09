@@ -8,8 +8,6 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
@@ -25,15 +23,31 @@ body,
 
 body {
   font-family: var(--font-family);
-  background: var(--background-primary);
+  background:
+    radial-gradient(circle at top left, rgb(59 130 246 / 0.18), transparent 26%),
+    radial-gradient(circle at top right, rgb(14 165 233 / 0.1), transparent 22%),
+    radial-gradient(circle at bottom, rgb(15 23 42 / 0.9), transparent 42%),
+    linear-gradient(180deg, #080d18 0%, var(--background-page) 100%);
   color: var(--text-primary);
   overflow: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.content-padding{
-    padding: var(--content-padding);
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.95), transparent 98%);
+  opacity: 0.28;
+}
+
+.content-padding {
+  padding: 1.25rem;
 }
 
 button,
