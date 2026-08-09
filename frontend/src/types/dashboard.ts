@@ -1,5 +1,5 @@
 import type { ActivityItem } from "./activity";
-import type { ConnectedCluster, ClusterHealth } from "./cluster";
+import type { ClusterHealth } from "./cluster";
 
 export interface DashboardStats {
   nodes: number;
@@ -9,15 +9,7 @@ export interface DashboardStats {
   services: number;
 }
 
-export interface QuickAction {
-  id: string;
-  title: string;
-  description: string;
-}
-
 export interface DashboardData {
-  cluster: ConnectedCluster;
-
   stats: DashboardStats;
 
   health: ClusterHealth[];
@@ -25,4 +17,16 @@ export interface DashboardData {
   recentActivity: ActivityItem[];
 
   quickActions: QuickAction[];
+}
+
+export type QuickActionType =
+  | "resource"
+  | "experiment"
+  | "topology";
+
+export interface QuickAction {
+  id: string;
+  action: QuickActionType;
+  title: string;
+  description: string;
 }

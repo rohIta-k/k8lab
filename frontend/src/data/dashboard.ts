@@ -1,13 +1,6 @@
 import type { DashboardData } from "../types/dashboard";
 
 export const dashboardData: DashboardData = {
-  cluster: {
-    id: "kind-dev",
-    name: "kind-dev",
-    provider: "kind",
-    version: "v1.34.0",
-    status: "Connected",
-  },
 
   stats: {
     nodes: 2,
@@ -91,22 +84,25 @@ export const dashboardData: DashboardData = {
   ],
 
   quickActions: [
-    {
-      id: "create-resource",
-      title: "Create Resource",
-      description: "Deploy a new Kubernetes resource.",
-    },
+  {
+    id: "create-resource",
+    action: "resource",
+    title: "Create Resource",
+    description: "Deploy a new Kubernetes resource.",
+  },
 
-    {
-      id: "start-experiment",
-      title: "Start Experiment",
-      description: "Launch a debugging experiment.",
-    },
+  {
+    id: "start-experiment",
+    action: "experiment",
+    title: "Start Experiment",
+    description: "Launch a debugging experiment.",
+  },
 
-    {
-      id: "view-topology",
-      title: "View Topology",
-      description: "Visualize resource relationships.",
-    },
-  ],
+  {
+    id: "view-topology",
+    action: "topology",
+    title: "View Topology",
+    description: "Visualize resource relationships.",
+  },
+]
 };

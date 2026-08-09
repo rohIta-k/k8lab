@@ -141,3 +141,19 @@
     transform: translateY(0) scale(1);
   }
 }
+
+.tooltip-enter {
+  animation: tooltip-enter var(--transition-fast);
+}
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

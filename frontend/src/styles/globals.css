@@ -32,6 +32,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.content-padding{
+    padding: var(--content-padding);
+}
 
 button,
 input,

@@ -36,6 +36,7 @@ export const resourcesData: ResourcesData = {
       labels: {
         app: "frontend",
       },
+      strategy: "RollingUpdate",
     },
     {
       id: "backend-deployment",
@@ -50,6 +51,7 @@ export const resourcesData: ResourcesData = {
       labels: {
         app: "backend",
       },
+      strategy: "RollingUpdate",
     },
   ],
 

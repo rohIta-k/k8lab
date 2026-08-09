@@ -26,3 +26,14 @@ export interface TopologyGraph {
   nodes: TopologyNode[];
   edges: TopologyEdge[];
 }
+
+export interface TopologySelection {
+  node: TopologyNode | null;
+  edge: TopologyEdge | null;
+}
+
+export interface TopologyViewport {
+  zoom: number;
+  x: number;
+  y: number;
+}

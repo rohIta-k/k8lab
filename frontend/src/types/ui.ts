@@ -9,10 +9,6 @@ export interface DropdownOption<T = string> {
   value: T;
 }
 
-export interface SearchState {
-  value: string;
-}
-
 export interface FilterOption<T = string> {
   label: string;
   value: T;
@@ -21,7 +17,8 @@ export interface FilterOption<T = string> {
 export interface TableColumn {
   id: string;
   label: string;
-  width?: number | string;
+  width?: string | number;
+  align?: "left" | "center" | "right";
 }
 
 export interface SidebarState {

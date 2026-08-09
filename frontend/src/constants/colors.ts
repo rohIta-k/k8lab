@@ -44,11 +44,26 @@ export const COLORS = {
   /* -------------------------------------------------------------------------- */
 
   status: {
-    success: "#22C55E",
-    warning: "#F59E0B",
-    danger: "#EF4444",
-    info: "#38BDF8",
+  success: {
+    color: "#22C55E",
+    background: "#22C55E20",
   },
+
+  warning: {
+    color: "#F59E0B",
+    background: "#F59E0B20",
+  },
+
+  danger: {
+    color: "#EF4444",
+    background: "#EF444420",
+  },
+
+  info: {
+    color: "#38BDF8",
+    background: "#38BDF820",
+  },
+},
 
   /* -------------------------------------------------------------------------- */
   /* Resource Colors */

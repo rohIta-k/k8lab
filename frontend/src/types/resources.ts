@@ -20,6 +20,32 @@ export type SecretType =
   | "kubernetes.io/tls"
   | "kubernetes.io/dockerconfigjson";
 
+export type ResourceType =
+  | "namespaces"
+  | "pods"
+  | "deployments"
+  | "replicaSets"
+  | "services"
+  | "ingresses"
+  | "configMaps"
+  | "secrets"
+  | "persistentVolumeClaims"
+  | "jobs"
+  | "cronJobs";
+
+  export type Resource =
+  | Namespace
+  | Deployment
+  | ReplicaSet
+  | Pod
+  | Service
+  | ConfigMap
+  | Secret
+  | Ingress
+  | PersistentVolumeClaim
+  | Job
+  | CronJob;
+
 export interface Namespace {
   id: string;
   name: string;
@@ -38,6 +64,7 @@ export interface Deployment {
   age: string;
   node: string;
   labels: Record<string, string>;
+  strategy: string;
 }
 
 export interface ReplicaSet {

@@ -62,3 +62,16 @@ export interface Experiment {
   expectedState: ExperimentExpectedState;
 }
 
+export interface ExperimentLog {
+  id: string;
+  timestamp: string;
+
+  level:
+    | "INFO"
+    | "SUCCESS"
+    | "WARNING"
+    | "ERROR";
+
+  message: string;
+}
+
