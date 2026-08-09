@@ -65,9 +65,5 @@ function Canvas() {
 }
 
 export default function TopologyCanvas() {
-  return (
-    <ReactFlowProvider>
-      <Canvas />
-    </ReactFlowProvider>
-  );
+  return<Canvas />;
 }
