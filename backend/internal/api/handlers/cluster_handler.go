@@ -194,3 +194,41 @@ func (h *ClusterHandler) ConnectCluster(
 		result,
 	)
 }
+
+func (h *ClusterHandler) GetDashboard(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	id := r.PathValue("id")
+
+	if id == "" {
+		Error(
+			w,
+			http.StatusBadRequest,
+			"cluster id is required",
+		)
+
+		return
+	}
+
+	result, err := h.service.Dashboard(
+		r.Context(),
+		id,
+	)
+
+	if err != nil {
+		Error(
+			w,
+			http.StatusServiceUnavailable,
+			err.Error(),
+		)
+
+		return
+	}
+
+	JSON(
+		w,
+		http.StatusOK,
+		result,
+	)
+}

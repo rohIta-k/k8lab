@@ -29,4 +29,5 @@ export interface QuickAction {
   action: QuickActionType;
   title: string;
   description: string;
+  path: string;
 }

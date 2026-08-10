@@ -20,7 +20,7 @@ export interface ActivityItem {
 
   description: string;
 
-  time: string;
+  createdAt: string;
 
   status: ActivityStatus;
 }

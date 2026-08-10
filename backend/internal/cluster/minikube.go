@@ -65,21 +65,43 @@ func (MinikubeProvider) List(
 	clusters := make([]Cluster, 0)
 
 	for _, profile := range profiles {
-		status := StatusAvailable
+		status := StatusDisconnected
 
 		switch strings.ToLower(
 			profile.Status,
 		) {
 		case "running":
 			status = StatusAvailable
+
+		case "stopped":
+			status = StatusStopped
+
+		case "nonexistent":
+			status = StatusDisconnected
+		}
+
+		contextName :=
+			MinikubeProvider{}.Context(
+				profile.Name,
+			)
+
+		version := ""
+
+		if status != StatusDisconnected {
+			version, _ =
+				getClusterVersion(
+					ctx,
+					contextName,
+				)
 		}
 
 		clusters = append(
 			clusters,
 			Cluster{
-				ID:       "minikube-" + profile.Name,
+				ID:       clusterID(ProviderMinikube, profile.Name),
 				Name:     profile.Name,
 				Provider: ProviderMinikube,
+				Version:  version,
 				Status:   status,
 			},
 		)
@@ -112,7 +134,7 @@ func (MinikubeProvider) Create(
 	version, _ := MinikubeProvider{}.Version(ctx)
 
 	return Cluster{
-		ID:       "minikube-" + name,
+		ID:       clusterID(ProviderMinikube, name),
 		Name:     name,
 		Provider: ProviderMinikube,
 		Version:  version,

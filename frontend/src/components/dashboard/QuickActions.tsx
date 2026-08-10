@@ -4,10 +4,11 @@ import {
   FlaskConical,
   Network,
 } from "lucide-react";
+import clsx from "clsx";
+import { NavLink } from "react-router-dom";
 
 import { dashboardData } from "../../data/dashboard";
 
-import Button from "../common/Button";
 import Card from "../common/Card";
 
 const actionIcons = {
@@ -19,44 +20,42 @@ const actionIcons = {
 export default function QuickActions() {
   return (
     <Card>
-      <h2 className="mb-6 text-lg font-semibold text-[var(--text-primary)]">
+      <h2 className="mb-4 text-lg font-semibold text-(--text-primary)">
         Quick Actions
       </h2>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3">
         {dashboardData.quickActions.map((action) => {
           const Icon =
             actionIcons[action.action] ?? ArrowRight;
 
           return (
-            <div
+            <NavLink
               key={action.id}
-              className="rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-hover)] p-5 transition hover:border-[var(--primary)]"
+              to={action.path}
+              className={({ isActive }) =>
+                clsx(
+                  "flex min-h-34 flex-col items-center justify-center rounded-md border border-(--border-color) bg-(--background-hover) px-4 py-5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-(--primary) hover:bg-(--background-card)",
+                  isActive &&
+                    "border-(--primary) bg-(--background-card) shadow-[0_12px_24px_rgba(59,130,246,0.12)]"
+                )
+              }
             >
-              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--background-card)]">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-(--background-card)">
                 <Icon
-                  size={20}
-                  className="text-[var(--primary)]"
+                  size={18}
+                  className="text-(--primary)"
                 />
               </div>
 
-              <h3 className="text-base font-semibold text-[var(--text-primary)]">
+              <h3 className="text-sm font-semibold text-(--text-primary)">
                 {action.title}
               </h3>
 
-              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+              <p className="mt-1.5 text-xs leading-5 text-(--text-secondary)">
                 {action.description}
               </p>
-
-              <Button
-                variant="ghost"
-                className="mt-4 w-full justify-between"
-              >
-                Open
-
-                <ArrowRight size={16} />
-              </Button>
-            </div>
+            </NavLink>
           );
         })}
       </div>

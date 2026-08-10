@@ -16,11 +16,18 @@ import {
 
 import { useCluster } from "../../hooks";
 
+import type { ClusterProvider } from "../../types/cluster";
+
 export default function ClusterSelector() {
     const {
         clusters,
         currentCluster,
-        setCurrentCluster,
+        loading,
+        error,
+        connectCluster,
+        createCluster,
+        deleteCluster,
+        clearError,
     } = useCluster();
 
     const [showClusters, setShowClusters] =
@@ -35,67 +42,83 @@ export default function ClusterSelector() {
     const [deletingId, setDeletingId] =
         useState<string | null>(null);
 
+    const [creating, setCreating] =
+        useState(false);
+
     const [clusterName, setClusterName] =
         useState("");
 
     const [provider, setProvider] =
-        useState("kind");
+        useState<ClusterProvider>("kind");
 
-    const handleConnect = (clusterId: string) => {
+    const handleConnect = async (
+        clusterId: string,
+    ) => {
+        clearError();
         setConnectingId(clusterId);
 
-        // Temporary mock connection.
-        // Replace with clusterService.connectCluster()
-        // when the backend is available.
-        setTimeout(() => {
-            setCurrentCluster(clusterId);
-            setConnectingId(null);
+        try {
+            await connectCluster(clusterId);
             setShowClusters(false);
-        }, 800);
+        } finally {
+            setConnectingId(null);
+        }
     };
 
-    const handleCreate = () => {
-        if (!clusterName.trim()) {
+    const handleCreate = async () => {
+        const name = clusterName.trim();
+
+        if (!name) {
             return;
         }
 
-        // TODO:
-        // Replace with clusterService.createCluster()
-        console.log({
-            name: clusterName,
-            provider,
-        });
+        clearError();
+        setCreating(true);
 
-        setClusterName("");
-        setProvider("kind");
-        setShowCreateForm(false);
+        try {
+            await createCluster({
+                name,
+                provider,
+            });
+
+            setClusterName("");
+            setProvider("kind");
+            setShowCreateForm(false);
+        } finally {
+            setCreating(false);
+        }
     };
 
-    const handleDelete = (clusterId: string) => {
+    const handleDelete = async (
+        clusterId: string,
+    ) => {
         if (
             !window.confirm(
-                "Are you sure you want to delete this cluster?"
+                "Are you sure you want to delete this cluster?",
             )
         ) {
             return;
         }
 
+        clearError();
         setDeletingId(clusterId);
 
-        // TODO:
-        // Replace with clusterService.deleteCluster()
-        setTimeout(() => {
+        try {
+            await deleteCluster(clusterId);
+        } finally {
             setDeletingId(null);
-        }, 500);
+        }
     };
 
     const availableClusters = clusters.filter(
-        (cluster) => cluster.id !== currentCluster.id
+        (cluster) =>
+            cluster.id !== currentCluster?.id,
     );
 
     return (
         <>
             <section className="rounded-[var(--radius-lg)] border border-[var(--border-color)] bg-[var(--background-card)] p-5 shadow-[var(--shadow-md)]">
+
                 {/* Header */}
                 <div className="mb-5 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                     <Layers3
@@ -108,46 +131,101 @@ export default function ClusterSelector() {
                     </span>
                 </div>
 
+                {/* Backend error */}
+                {error && (
+                    <div className="mb-4 flex items-start justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--danger)]/20 bg-[var(--danger)]/10 p-3 text-sm text-[var(--danger)]">
+                        <span>{error}</span>
+
+                        <button
+                            type="button"
+                            onClick={clearError}
+                            className="shrink-0 rounded p-0.5 transition hover:bg-[var(--danger)]/10"
+                        >
+                            <X size={15} />
+                        </button>
+                    </div>
+                )}
+
                 {/* Current cluster */}
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex min-w-0 items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--background-hover)]">
-                            <Cpu
-                                size={18}
-                                className="text-[var(--primary-light)]"
-                            />
+                {currentCluster ? (
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex min-w-0 items-center gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--background-hover)]">
+                                <Cpu
+                                    size={18}
+                                    className="text-[var(--primary-light)]"
+                                />
+                            </div>
+
+                            <div className="min-w-0">
+                                <h2 className="truncate text-base font-semibold text-[var(--text-primary)]">
+                                    {currentCluster.name}
+                                </h2>
+
+                                <p className="text-xs text-[var(--text-secondary)]">
+                                    {currentCluster.provider} •{" "}
+                                    {currentCluster.version || "Unknown"}
+                                </p>
+                            </div>
                         </div>
+                        <div className="flex items-center gap-2">
+                            <span
+                                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${currentCluster.status === "Connected"
+                                    ? "border-[var(--success)]/20 bg-[var(--success)]/10 text-[var(--success)]"
+                                    : currentCluster.status === "Stopped"
+                                        ? "border-[var(--warning)]/20 bg-[var(--warning)]/10 text-[var(--warning)]"
+                                        : currentCluster.status === "Disconnected"
+                                            ? "border-[var(--danger)]/20 bg-[var(--danger)]/10 text-[var(--danger)]"
+                                            : "border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[var(--primary)]"
+                                    }`}
+                            >
+                                <Circle
+                                    size={7}
+                                    fill="currentColor"
+                                />
 
-                        <div className="min-w-0">
-                            <h2 className="truncate text-base font-semibold text-[var(--text-primary)]">
-                                {currentCluster.name}
-                            </h2>
-
-                            <p className="text-xs text-[var(--text-secondary)]">
-                                {currentCluster.provider} •{" "}
-                                {currentCluster.version}
-                            </p>
+                                {currentCluster.status}
+                            </span>
+                            <button
+                                type="button"
+                                disabled={
+                                    loading ||
+                                    deletingId === currentCluster.id
+                                }
+                                onClick={() =>
+                                    handleDelete(currentCluster.id)
+                                }
+                                className="rounded-lg p-2 text-[var(--text-muted)] transition hover:bg-[var(--danger)]/10 hover:text-[var(--danger)] disabled:cursor-not-allowed disabled:opacity-50"
+                                title="Delete cluster"
+                            >
+                                {deletingId === currentCluster.id ? (
+                                    <Loader2
+                                        size={15}
+                                        className="animate-spin"
+                                    />
+                                ) : (
+                                    <Trash2 size={15} />
+                                )}
+                            </button>
                         </div>
                     </div>
-
-                    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--success)]/20 bg-[var(--success)]/10 px-2.5 py-1 text-xs font-medium text-[var(--success)]">
-                        <Circle
-                            size={7}
-                            fill="currentColor"
-                        />
-
-                        Connected
-                    </span>
-                </div>
+                ) : (
+                    <div className="rounded-[var(--radius-md)] bg-[var(--background-hover)] p-4 text-sm text-[var(--text-secondary)]">
+                        No cluster connected.
+                    </div>
+                )}
 
                 {/* Actions */}
                 <div className="mt-5 flex flex-wrap gap-3">
                     <button
                         type="button"
                         onClick={() =>
-                            setShowClusters((value) => !value)
+                            setShowClusters(
+                                (value) => !value,
+                            )
                         }
-                        className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--primary)]/20"
+                        disabled={loading}
+                        className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--primary)]/30 bg-[var(--primary)]/10 px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--primary)]/20 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <PlugZap size={16} />
 
@@ -162,10 +240,12 @@ export default function ClusterSelector() {
 
                     <button
                         type="button"
-                        onClick={() =>
-                            setShowCreateForm(true)
-                        }
-                        className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-hover)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                        onClick={() => {
+                            clearError();
+                            setShowCreateForm(true);
+                        }}
+                        disabled={loading}
+                        className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-hover)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Plus size={16} />
 
@@ -234,7 +314,7 @@ export default function ClusterSelector() {
 
                                                         <p className="text-xs text-[var(--text-muted)]">
                                                             {cluster.provider} •{" "}
-                                                            {cluster.version}
+                                                            {cluster.version || "Unknown"}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -244,15 +324,17 @@ export default function ClusterSelector() {
                                                         {cluster.status}
                                                     </span>
 
+                                                    {/* Connect */}
                                                     <button
                                                         type="button"
                                                         disabled={
                                                             connecting ||
-                                                            deleting
+                                                            deleting ||
+                                                            loading
                                                         }
                                                         onClick={() =>
                                                             handleConnect(
-                                                                cluster.id
+                                                                cluster.id,
                                                             )
                                                         }
                                                         className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-3 py-2 text-xs font-medium text-white transition hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -277,15 +359,17 @@ export default function ClusterSelector() {
                                                         )}
                                                     </button>
 
+                                                    {/* Delete */}
                                                     <button
                                                         type="button"
                                                         disabled={
                                                             connecting ||
-                                                            deleting
+                                                            deleting ||
+                                                            loading
                                                         }
                                                         onClick={() =>
                                                             handleDelete(
-                                                                cluster.id
+                                                                cluster.id,
                                                             )
                                                         }
                                                         className="rounded-lg p-2 text-[var(--text-muted)] transition hover:bg-[var(--danger)]/10 hover:text-[var(--danger)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -305,7 +389,7 @@ export default function ClusterSelector() {
                                                 </div>
                                             </div>
                                         );
-                                    }
+                                    },
                                 )
                             )}
                         </div>
@@ -317,6 +401,7 @@ export default function ClusterSelector() {
             {showCreateForm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
                     <div className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--border-color)] bg-[var(--background-card)] shadow-[var(--shadow-lg)]">
+
                         {/* Modal header */}
                         <div className="flex items-center justify-between border-b border-[var(--border-color)] p-5">
                             <div>
@@ -334,7 +419,8 @@ export default function ClusterSelector() {
                                 onClick={() =>
                                     setShowCreateForm(false)
                                 }
-                                className="rounded-full p-2 text-[var(--text-muted)] transition hover:bg-[var(--background-hover)] hover:text-[var(--text-primary)]"
+                                disabled={creating}
+                                className="rounded-full p-2 text-[var(--text-muted)] transition hover:bg-[var(--background-hover)] hover:text-[var(--text-primary)] disabled:opacity-50"
                             >
                                 <X size={18} />
                             </button>
@@ -351,11 +437,12 @@ export default function ClusterSelector() {
                                     value={clusterName}
                                     onChange={(event) =>
                                         setClusterName(
-                                            event.target.value
+                                            event.target.value,
                                         )
                                     }
                                     placeholder="my-cluster"
-                                    className="w-full rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-primary)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--primary)]"
+                                    disabled={creating}
+                                    className="w-full rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-primary)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--primary)] disabled:opacity-50"
                                 />
                             </div>
 
@@ -368,10 +455,12 @@ export default function ClusterSelector() {
                                     value={provider}
                                     onChange={(event) =>
                                         setProvider(
-                                            event.target.value
+                                            event.target
+                                                .value as ClusterProvider,
                                         )
                                     }
-                                    className="w-full rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-primary)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--primary)]"
+                                    disabled={creating}
+                                    className="w-full rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-primary)] px-3 py-2.5 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--primary)] disabled:opacity-50"
                                 >
                                     <option value="kind">
                                         kind
@@ -391,18 +480,31 @@ export default function ClusterSelector() {
                                 onClick={() =>
                                     setShowCreateForm(false)
                                 }
-                                className="rounded-[var(--radius-md)] border border-[var(--border-color)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--background-hover)]"
+                                disabled={creating}
+                                className="rounded-[var(--radius-md)] border border-[var(--border-color)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--background-hover)] disabled:opacity-50"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 type="button"
-                                disabled={!clusterName.trim()}
+                                disabled={
+                                    creating ||
+                                    !clusterName.trim()
+                                }
                                 onClick={handleCreate}
-                                className="rounded-[var(--radius-md)] bg-[var(--primary)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-50"
+                                className="inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--primary)] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                Create Cluster
+                                {creating && (
+                                    <Loader2
+                                        size={15}
+                                        className="animate-spin"
+                                    />
+                                )}
+
+                                {creating
+                                    ? "Creating..."
+                                    : "Create Cluster"}
                             </button>
                         </div>
                     </div>

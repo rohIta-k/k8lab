@@ -1,78 +1,99 @@
 import {
-  AlertTriangle,
   CheckCircle2,
   XCircle,
 } from "lucide-react";
 
-import { dashboardData } from "../../data/dashboard";
-
 import Badge from "../common/Badge";
 import Card from "../common/Card";
 
-export default function ClusterHealth() {
+import type { ClusterHealth as ClusterHealthData } from "../../types/cluster";
+
+interface ClusterHealthProps {
+  health: ClusterHealthData[];
+}
+
+export default function ClusterHealth({
+  health,
+}: ClusterHealthProps) {
+  const allHealthy =
+    health.length > 0 &&
+    health.every(
+      (component) =>
+        component.status === "Healthy"
+    );
+
   return (
-    <Card className="min-h-[370px]">
-      <div className="mb-6 flex items-center justify-between">
+    <Card>
+      <div className="mb-5 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">
             Cluster Health
           </h2>
 
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            Core control-plane components are healthy.
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Current status of cluster components.
           </p>
         </div>
-
-        <Badge variant="success">
-          Healthy
-        </Badge>
       </div>
 
-      <div className="space-y-3">
-        {dashboardData.health.map((component) => {
-          const variant =
-            component.status === "Healthy"
-              ? "success"
-              : component.status === "Warning"
-              ? "warning"
-              : "danger";
+      {health.length === 0 ? (
+        <div className="rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-elevated)] p-4 text-sm text-[var(--text-secondary)]">
+          No health information available.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {health.map((component) => {
+            const healthy =
+              component.status === "Healthy";
 
-          const Icon =
-            component.status === "Healthy"
+            const Icon = healthy
               ? CheckCircle2
-              : component.status === "Warning"
-              ? AlertTriangle
               : XCircle;
 
-          return (
-            <div
-              key={component.id}
-              className="flex items-center justify-between rounded-[24px] border border-white/5 bg-[var(--background-elevated)]/70 px-4 py-4 shadow-[0_10px_24px_rgba(0,0,0,0.14)]"
-            >
-              <div className="flex items-center gap-3">
-                <Icon
-                  size={18}
-                  className={
-                    component.status === "Healthy"
-                      ? "text-[var(--success)]"
-                      : component.status === "Warning"
-                      ? "text-[var(--warning)]"
-                      : "text-[var(--danger)]"
-                  }
-                />
+            return (
+              <div
+                key={component.id}
+                className="rounded-[24px] border border-white/5 bg-[var(--background-elevated)]/70 px-4 py-4 shadow-[0_10px_24px_rgba(0,0,0,0.14)]"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Icon
+                      size={18}
+                      className={
+                        healthy
+                          ? "text-[var(--success)]"
+                          : "text-[var(--danger)]"
+                      }
+                    />
 
-                <span className="text-sm text-[var(--text-primary)]">
-                  {component.name}
-                </span>
+                    <span className="text-sm text-[var(--text-primary)]">
+                      {component.name}
+                    </span>
+                  </div>
+
+                  <Badge
+                    variant={
+                      healthy
+                        ? "success"
+                        : "danger"
+                    }
+                    className="shrink-0"
+                  >
+                    {component.status}
+                  </Badge>
+                </div>
+
+                {!healthy &&
+                  component.reason && (
+                    <p className="mt-2 ml-7 text-xs text-[var(--text-secondary)]">
+                      {component.reason}
+                    </p>
+                  )}
               </div>
-
-              <Badge variant={variant} className="shrink-0">
-                {component.status}
-              </Badge>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </Card>
   );
 }

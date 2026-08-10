@@ -39,24 +39,29 @@ func (KindProvider) List(
 		)
 	}
 
-	var clusters []Cluster
+	clusters := make([]Cluster, 0)
 
 	for _, name := range strings.Fields(
 		string(out),
 	) {
+		contextName :=
+			KindProvider{}.Context(name)
+
+		version, _ := getClusterVersion(
+			ctx,
+			contextName,
+		)
+
 		clusters = append(
 			clusters,
 			Cluster{
-				ID:       "kind-" + name,
+				ID:       clusterID(ProviderKind, name),
 				Name:     name,
 				Provider: ProviderKind,
+				Version:  version,
 				Status:   StatusAvailable,
 			},
 		)
-	}
-
-	if clusters == nil {
-		clusters = []Cluster{}
 	}
 
 	return clusters, nil
@@ -86,7 +91,7 @@ func (KindProvider) Create(
 	version, _ := KindProvider{}.Version(ctx)
 
 	return Cluster{
-		ID:       "kind-" + name,
+		ID:       clusterID(ProviderKind, name),
 		Name:     name,
 		Provider: ProviderKind,
 		Version:  version,

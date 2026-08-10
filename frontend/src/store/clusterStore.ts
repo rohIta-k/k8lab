@@ -1,47 +1,360 @@
 import { create } from "zustand";
 
-import { clusters } from "../data/clusters";
+import { clusterService } from "../services/clusterService";
 
-import type { Cluster } from "../types/cluster";
+import type {
+  Cluster,
+  ClusterProvider,
+} from "../types/cluster";
+
+interface CreateClusterRequest {
+  name: string;
+  provider: ClusterProvider;
+}
 
 interface ClusterStore {
   clusters: Cluster[];
+  currentCluster: Cluster | null;
 
-  currentCluster: Cluster;
+  loading: boolean;
+  error: string | null;
 
   setCurrentCluster: (clusterId: string) => void;
 
-  refreshClusters: () => void;
+  fetchClusters: () => Promise<void>;
+
+  connectCluster: (
+    clusterId: string,
+  ) => Promise<void>;
+
+  createCluster: (
+    request: CreateClusterRequest,
+  ) => Promise<void>;
+
+  deleteCluster: (
+    clusterId: string,
+  ) => Promise<void>;
+
+  clearError: () => void;
 }
 
-export const useClusterStore = create<ClusterStore>((set, get) => ({
-  clusters,
+const STORAGE_KEY =
+  "k8lab-current-cluster";
 
-  currentCluster:
-    clusters.find((cluster) => cluster.current) ?? clusters[0],
+export const useClusterStore =
+  create<ClusterStore>((set, get) => ({
+    clusters: [],
+    currentCluster: null,
 
-  setCurrentCluster: (clusterId) => {
-    const cluster = get().clusters.find(
-      (item) => item.id === clusterId
-    );
+    loading: false,
+    error: null,
 
-    if (!cluster) {
-      return;
-    }
+    setCurrentCluster: (clusterId) => {
+      const cluster =
+        get().clusters.find(
+          (item) => item.id === clusterId,
+        );
 
-    set({
-      currentCluster: cluster,
+      if (!cluster) {
+        return;
+      }
 
-      clusters: get().clusters.map((item) => ({
-        ...item,
-        current: item.id === clusterId,
-      })),
-    });
-  },
+      localStorage.setItem(
+        STORAGE_KEY,
+        cluster.id,
+      );
 
-  refreshClusters: () => {
-    set({
-      clusters: [...clusters],
-    });
-  },
-}));
+      set({
+        currentCluster: {
+          ...cluster,
+          current: true,
+        },
+
+        clusters:
+          get().clusters.map(
+            (item) => ({
+              ...item,
+              current:
+                item.id === clusterId,
+            }),
+          ),
+      });
+    },
+
+    fetchClusters: async () => {
+      set({
+        loading: true,
+        error: null,
+      });
+
+      try {
+        const clusters =
+          await clusterService.getClusters();
+
+        const savedId =
+          localStorage.getItem(
+            STORAGE_KEY,
+          );
+
+        let currentCluster:
+          | Cluster
+          | null = null;
+
+        /*
+         * First try the cluster saved from the
+         * previous session.
+         */
+        if (savedId) {
+          currentCluster =
+            clusters.find(
+              (cluster) =>
+                cluster.id === savedId,
+            ) ?? null;
+        }
+
+        /*
+         * If there is no saved cluster,
+         * use the cluster marked current by
+         * the backend.
+         */
+        if (!currentCluster) {
+          currentCluster =
+            clusters.find(
+              (cluster) =>
+                cluster.current,
+            ) ?? null;
+        }
+
+        /*
+         * Saved cluster no longer exists.
+         * Remove stale localStorage value.
+         */
+        if (!currentCluster && savedId) {
+          localStorage.removeItem(
+            STORAGE_KEY,
+          );
+        }
+
+        const updatedClusters =
+          clusters.map(
+            (cluster) => ({
+              ...cluster,
+              current:
+                cluster.id ===
+                currentCluster?.id,
+              status:
+                cluster.id === savedId
+                  ? "Connected"
+                  : cluster.status,
+            }),
+          );
+
+        const updatedCurrentCluster: Cluster | null =
+          currentCluster
+            ? {
+              ...currentCluster,
+              current: true,
+              status: "Connected",
+            }
+            : null;
+
+        set({
+          clusters: updatedClusters,
+          currentCluster: updatedCurrentCluster,
+          loading: false,
+        });
+      } catch (error) {
+        set({
+          loading: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to fetch clusters.",
+        });
+      }
+    },
+
+    connectCluster: async (
+      clusterId,
+    ) => {
+      set({
+        loading: true,
+        error: null,
+      });
+
+      try {
+        const cluster =
+          await clusterService.connectCluster(
+            clusterId,
+          );
+
+        localStorage.setItem(
+          STORAGE_KEY,
+          cluster.id,
+        );
+
+        const clusters =
+          get().clusters.map(
+            (item) => ({
+              ...item,
+              current:
+                item.id === cluster.id,
+              status:
+                item.id === cluster.id
+                  ? "Connected"
+                  : item.status,
+            }),
+          );
+
+        set({
+          clusters,
+          currentCluster: {
+            ...cluster,
+            current: true,
+            status: "Connected",
+          },
+          loading: false,
+        });
+      } catch (error) {
+        set({
+          loading: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to connect cluster.",
+        });
+      }
+    },
+
+    createCluster: async (
+      request,
+    ) => {
+      set({
+        loading: true,
+        error: null,
+      });
+
+      try {
+        const cluster =
+          await clusterService.createCluster(
+            request,
+          );
+
+        localStorage.setItem(
+          STORAGE_KEY,
+          cluster.id,
+        );
+
+        /*
+         * Refresh the cluster list so the
+         * newly created cluster gets all
+         * backend-generated information.
+         */
+        const clusters =
+          await clusterService.getClusters();
+
+        const updatedClusters =
+          clusters.map(
+            (item) => ({
+              ...item,
+              current:
+                item.id === cluster.id,
+            }),
+          );
+
+        const current =
+          updatedClusters.find(
+            (item) =>
+              item.id === cluster.id,
+          ) ?? cluster;
+
+        set({
+          clusters: updatedClusters,
+          currentCluster: {
+            ...current,
+            current: true,
+          },
+          loading: false,
+        });
+      } catch (error) {
+        set({
+          loading: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to create cluster.",
+        });
+      }
+    },
+
+    deleteCluster: async (
+      clusterId,
+    ) => {
+      set({
+        loading: true,
+        error: null,
+      });
+
+      try {
+        await clusterService.deleteCluster(
+          clusterId,
+        );
+
+        if (
+          localStorage.getItem(
+            STORAGE_KEY,
+          ) === clusterId
+        ) {
+          localStorage.removeItem(
+            STORAGE_KEY,
+          );
+        }
+
+        const clusters =
+          await clusterService.getClusters();
+
+        const savedId =
+          localStorage.getItem(
+            STORAGE_KEY,
+          );
+
+        const currentCluster =
+          clusters.find(
+            (cluster) =>
+              cluster.id === savedId,
+          ) ??
+          clusters.find(
+            (cluster) =>
+              cluster.current,
+          ) ??
+          null;
+
+        set({
+          clusters: clusters.map(
+            (cluster) => ({
+              ...cluster,
+              current:
+                cluster.id ===
+                currentCluster?.id,
+            }),
+          ),
+          currentCluster,
+          loading: false,
+        });
+      } catch (error) {
+        set({
+          loading: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to delete cluster.",
+        });
+      }
+    },
+
+    clearError: () => {
+      set({
+        error: null,
+      });
+    },
+  }));

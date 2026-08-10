@@ -1,5 +1,11 @@
 import type { DashboardData } from "../types/dashboard";
 
+import {
+  EXPERIMENTS_ROUTE,
+  RESOURCES_ROUTE,
+  TOPOLOGY_ROUTE,
+} from "../constants/navigation";
+
 export const dashboardData: DashboardData = {
 
   stats: {
@@ -89,6 +95,7 @@ export const dashboardData: DashboardData = {
     action: "resource",
     title: "Create Resource",
     description: "Deploy a new Kubernetes resource.",
+    path: RESOURCES_ROUTE.path,
   },
 
   {
@@ -96,6 +103,7 @@ export const dashboardData: DashboardData = {
     action: "experiment",
     title: "Start Experiment",
     description: "Launch a debugging experiment.",
+    path: EXPERIMENTS_ROUTE.path,
   },
 
   {
@@ -103,6 +111,7 @@ export const dashboardData: DashboardData = {
     action: "topology",
     title: "View Topology",
     description: "Visualize resource relationships.",
+    path: TOPOLOGY_ROUTE.path,
   },
 ]
 };

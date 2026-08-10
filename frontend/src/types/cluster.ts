@@ -1,18 +1,17 @@
 export type ClusterProvider =
   | "kind"
   | "minikube"
-  | "k3d";
 
 export type ClusterStatus =
   | "Connected"
   | "Available"
+  | "Connecting"
   | "Stopped"
   | "Disconnected";
 
 export type ClusterHealthStatus =
   | "Healthy"
-  | "Warning"
-  | "Error";
+  | "Unhealthy";
 
 export interface Cluster {
   id: string;
@@ -44,10 +43,9 @@ export interface ConnectedCluster {
 
 export interface ClusterHealth {
   id: string;
-
   name: string;
-
   status: ClusterHealthStatus;
+  reason?: string;
 }
 
 export interface ClusterAction {
