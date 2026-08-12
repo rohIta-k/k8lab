@@ -29,86 +29,83 @@ export default function ResourceRow({
         "-"
       );
 
-    case "age":
-      return resource.age;
-
-    case "ready":
-      return "ready" in resource
-        ? resource.ready
+    case "fields.ready":
+      return "ready" in resource.fields
+        ? resource.fields.ready
         : "-";
 
-    case "replicas":
-      return "replicas" in resource
-        ? resource.replicas
+    case "fields.replicas":
+      return "replicas" in resource.fields
+        ? resource.fields.replicas
         : "-";
 
-    case "image":
-      return "image" in resource ? (
+    case "fields.image":
+      return "image" in resource.fields ? (
         <Badge variant="secondary">
-          {resource.image}
+          {resource.fields.image}
         </Badge>
       ) : (
         "-"
       );
 
-    case "node":
-      return "node" in resource
-        ? resource.node
+    case "fields.strategy":
+      return "strategy" in resource.fields
+        ? resource.fields.strategy
         : "-";
 
-    case "restartCount":
-      return "restartCount" in resource
-        ? resource.restartCount
+    case "fields.node":
+      return "node" in resource.fields
+        ? resource.fields.node
         : "-";
 
-    case "owner":
-      return "owner" in resource
-        ? resource.owner
+    case "fields.restartCount":
+      return "restartCount" in resource.fields
+        ? resource.fields.restartCount
         : "-";
 
-    case "type":
-      return "type" in resource
-        ? resource.type
+    case "fields.owner":
+      return "owner" in resource.fields
+        ? resource.fields.owner
         : "-";
 
-    case "clusterIP":
-      return "clusterIP" in resource
-        ? resource.clusterIP
+    case "fields.type":
+      return "type" in resource.fields
+        ? resource.fields.type
         : "-";
 
-    case "ports":
-      return "ports" in resource
-        ? resource.ports
+    case "fields.clusterIP":
+      return "clusterIP" in resource.fields
+        ? resource.fields.clusterIP
         : "-";
 
-    case "host":
-      return "host" in resource
-        ? resource.host
+    case "fields.ports":
+      return "ports" in resource.fields
+        ? resource.fields.ports.join(", ")
         : "-";
 
-    case "service":
-      return "service" in resource
-        ? resource.service
+    case "fields.hosts":
+      return "hosts" in resource.fields
+        ? resource.fields.hosts.join(", ")
         : "-";
 
-    case "capacity":
-      return "capacity" in resource
-        ? resource.capacity
+    case "fields.keys":
+      return "keys" in resource.fields
+        ? resource.fields.keys
         : "-";
 
-    case "schedule":
-      return "schedule" in resource
-        ? resource.schedule
+    case "fields.capacity":
+      return "capacity" in resource.fields
+        ? resource.fields.capacity
         : "-";
 
-    case "mountedInto":
-      return "mountedInto" in resource
-        ? resource.mountedInto.join(", ")
+    case "fields.completions":
+      return "completions" in resource.fields
+        ? resource.fields.completions
         : "-";
 
-    case "completions":
-      return "completions" in resource
-        ? resource.completions
+    case "fields.schedule":
+      return "schedule" in resource.fields
+        ? resource.fields.schedule
         : "-";
 
     default:

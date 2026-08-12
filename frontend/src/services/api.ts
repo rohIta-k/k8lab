@@ -1,5 +1,6 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+  import.meta.env.VITE_API_URL ??
+  "http://localhost:8080";
 
 async function request<T>(
   path: string,
@@ -17,16 +18,40 @@ async function request<T>(
   );
 
   if (!response.ok) {
-    let message = "Request failed";
+    let message = `Request failed (${response.status})`;
 
     try {
-      const data = await response.json();
+      const contentType =
+        response.headers.get("content-type") ?? "";
 
-      if (data.message) {
-        message = data.message;
+      if (
+        contentType.includes(
+          "application/json"
+        )
+      ) {
+        const data = await response.json();
+
+        if (
+          data &&
+          typeof data.message === "string"
+        ) {
+          message = data.message;
+        } else if (
+          data &&
+          typeof data.error === "string"
+        ) {
+          message = data.error;
+        }
+      } else {
+        const text =
+          await response.text();
+
+        if (text.trim()) {
+          message = text;
+        }
       }
     } catch {
-      // Keep default error message.
+      // Keep the status-based error message.
     }
 
     throw new Error(message);

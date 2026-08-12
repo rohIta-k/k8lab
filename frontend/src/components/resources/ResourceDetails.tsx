@@ -1,27 +1,27 @@
-import EmptyState from "../common/EmptyState";
+import { ChevronRight } from "lucide-react";
 
-import { useResources } from "../../hooks";
+import EmptyState from "../common/EmptyState";
 
 import type { Resource } from "../../types/resources";
 
 import OverviewCard from "./OverviewCard";
-import RelationshipsCard from "./RelationshipsCard";
 import YAMLCard from "./ResourceYAML";
 
-export default function ResourceDetails() {
-  const {
-    resources,
-    selectedResourceId,
-    selectedResourceType,
-  } = useResources();
+interface ResourceDetailsProps {
+  resource: Resource | null;
+  collapsed?: boolean;
+  onToggle?: () => void;
+  onDelete?: () => void;
+  deleting?: boolean;
+}
 
-  const resource = (
-    resources[selectedResourceType] as Resource[]
-  ).find(
-    (resource) =>
-      resource.id === selectedResourceId
-  );
-
+export default function ResourceDetails({
+  resource,
+  collapsed = false,
+  onToggle,
+  onDelete,
+  deleting = false,
+}: ResourceDetailsProps) {
   if (!resource) {
     return (
       <EmptyState
@@ -31,13 +31,49 @@ export default function ResourceDetails() {
     );
   }
 
+  /*
+   * When collapsed, show nothing.
+   *
+   * The resource row is responsible for opening
+   * the details again.
+   */
+  if (collapsed) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col gap-6">
-      <OverviewCard resource={resource} />
+    <aside className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-[var(--border-color)] bg-[var(--background-card)] p-2 shadow-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={onToggle}
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-[var(--text-secondary)] transition hover:bg-[var(--background-hover)] hover:text-[var(--text-primary)]"
+            aria-label="Collapse resource details"
+          >
+            <ChevronRight size={18} />
+          </button>
 
-      <RelationshipsCard resource={resource} />
+          <h2 className="truncate text-lg font-semibold text-[var(--text-primary)]">
+            {resource.name}
+          </h2>
+        </div>
 
-      <YAMLCard resource={resource} />
-    </div>
+        <button
+          type="button"
+          onClick={onDelete}
+          disabled={deleting}
+          className="inline-flex shrink-0 items-center justify-center rounded-[var(--radius-md)] border border-[var(--danger)]/30 bg-[var(--danger)]/15 px-3 py-1.5 text-sm font-medium text-[var(--danger)] transition hover:bg-[var(--danger)]/25 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {deleting ? "Deleting..." : "Delete"}
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-6">
+        <OverviewCard resource={resource} />
+
+        <YAMLCard resource={resource} />
+      </div>
+    </aside>
   );
 }

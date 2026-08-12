@@ -12,23 +12,26 @@ interface YAMLCardProps {
 export default function YAMLCard({
   resource,
 }: YAMLCardProps) {
-  const yaml = `apiVersion: v1
-kind: ${resource.constructor.name}
-metadata:
-  name: ${resource.name}
-spec:
-  # Live YAML will be fetched from backend`;
+  const copyYAML = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        resource.yaml
+      );
+    } catch {
+      // Ignore clipboard errors.
+    }
+  };
 
   return (
-    <Card>
-      <div className="mb-5 flex items-center justify-between">
+    <Card className="!p-2 shadow-none">
+      <div className="flex items-center justify-between border-b border-[var(--border-color)] px-4 py-3">
         <div className="flex items-center gap-2">
           <FileCode
-            size={18}
+            size={16}
             className="text-[var(--primary)]"
           />
 
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
             YAML Configuration
           </h3>
         </div>
@@ -36,13 +39,14 @@ spec:
         <Button
           variant="ghost"
           className="text-xs"
+          onClick={copyYAML}
         >
           Copy
         </Button>
       </div>
 
-      <pre className="overflow-auto rounded-[var(--radius-md)] bg-[var(--background-primary)] p-4 text-xs leading-6 text-[var(--text-secondary)]">
-        <code>{yaml}</code>
+      <pre className="max-h-[420px] overflow-auto bg-[var(--background-primary)] p-4 text-xs leading-6 text-[var(--text-secondary)]">
+        <code>{resource.yaml}</code>
       </pre>
     </Card>
   );

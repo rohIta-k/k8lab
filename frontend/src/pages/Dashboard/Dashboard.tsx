@@ -16,7 +16,6 @@ import {
 export default function Dashboard() {
   const {
     currentCluster,
-    fetchClusters,
   } = useCluster();
 
   const {
@@ -26,9 +25,6 @@ export default function Dashboard() {
     fetchDashboard,
   } = useDashboard();
 
-  useEffect(() => {
-    fetchClusters();
-  }, [fetchClusters]);
 
   useEffect(() => {
     if (!currentCluster) {

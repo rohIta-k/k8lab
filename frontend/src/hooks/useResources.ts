@@ -5,41 +5,79 @@ export function useResources() {
     (state) => state.resources
   );
 
-  const selectedNamespace = useResourceStore(
-    (state) => state.selectedNamespace
-  );
+  const selectedNamespace =
+    useResourceStore(
+      (state) =>
+        state.selectedNamespace
+    );
 
-  const selectedResourceType = useResourceStore(
-    (state) => state.selectedResourceType
-  );
+  const selectedResourceType =
+    useResourceStore(
+      (state) =>
+        state.selectedResourceType
+    );
 
-  const selectedResourceId = useResourceStore(
-    (state) => state.selectedResourceId
-  );
+  const selectedResourceId =
+    useResourceStore(
+      (state) =>
+        state.selectedResourceId
+    );
 
-  const searchQuery = useResourceStore(
-    (state) => state.searchQuery
-  );
+  const searchQuery =
+    useResourceStore(
+      (state) => state.searchQuery
+    );
 
-  const setNamespace = useResourceStore(
-    (state) => state.setNamespace
-  );
+  const showCreateResource =
+    useResourceStore(
+      (state) =>
+        state.showCreateResource
+    );
 
-  const setResourceType = useResourceStore(
-    (state) => state.setResourceType
-  );
+  const setNamespace =
+    useResourceStore(
+      (state) => state.setNamespace
+    );
 
-  const setSelectedResource = useResourceStore(
-    (state) => state.setSelectedResource
-  );
+  const setResourceType =
+    useResourceStore(
+      (state) =>
+        state.setResourceType
+    );
 
-  const setSearchQuery = useResourceStore(
-    (state) => state.setSearchQuery
-  );
+  const setSelectedResource =
+    useResourceStore(
+      (state) =>
+        state.setSelectedResource
+    );
 
-  const resetSelection = useResourceStore(
-    (state) => state.resetSelection
-  );
+  const setSearchQuery =
+    useResourceStore(
+      (state) =>
+        state.setSearchQuery
+    );
+
+  const setShowCreateResource =
+    useResourceStore(
+      (state) =>
+        state.setShowCreateResource
+    );
+
+  const setResources =
+    useResourceStore(
+      (state) => state.setResources
+    );
+
+  const createResource =
+    useResourceStore(
+      (state) =>
+        state.createResource
+    );
+
+  const resetSelection =
+    useResourceStore(
+      (state) => state.resetSelection
+    );
 
   return {
     resources,
@@ -47,10 +85,15 @@ export function useResources() {
     selectedResourceType,
     selectedResourceId,
     searchQuery,
+    showCreateResource,
+
     setNamespace,
     setResourceType,
     setSelectedResource,
     setSearchQuery,
+    setShowCreateResource,
+    setResources,
+    createResource,
     resetSelection,
   };
 }

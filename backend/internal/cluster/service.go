@@ -539,3 +539,10 @@ func (s *Service) recordActivity(
 		)
 	}
 }
+
+func (s *Service) Resolve(
+	ctx context.Context,
+	id string,
+) (ProviderClient, string, error) {
+	return s.resolveCluster(ctx, id)
+}

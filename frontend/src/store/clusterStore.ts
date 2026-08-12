@@ -19,7 +19,9 @@ interface ClusterStore {
   loading: boolean;
   error: string | null;
 
-  setCurrentCluster: (clusterId: string) => void;
+  setCurrentCluster: (
+    clusterId: string,
+  ) => void;
 
   fetchClusters: () => Promise<void>;
 
@@ -64,20 +66,24 @@ export const useClusterStore =
         cluster.id,
       );
 
+      const clusters =
+        get().clusters.map((item) => ({
+          ...item,
+          current:
+            item.id === clusterId,
+          status:
+            item.id === clusterId
+              ? "Connected"
+              : item.status,
+        }));
+
       set({
+        clusters,
         currentCluster: {
           ...cluster,
           current: true,
+          status: "Connected",
         },
-
-        clusters:
-          get().clusters.map(
-            (item) => ({
-              ...item,
-              current:
-                item.id === clusterId,
-            }),
-          ),
       });
     },
 
@@ -96,26 +102,22 @@ export const useClusterStore =
             STORAGE_KEY,
           );
 
-        let currentCluster:
-          | Cluster
-          | null = null;
-
         /*
-         * First try the cluster saved from the
-         * previous session.
+         * Restore the cluster that was selected
+         * before the browser was refreshed.
          */
-        if (savedId) {
-          currentCluster =
-            clusters.find(
-              (cluster) =>
-                cluster.id === savedId,
-            ) ?? null;
-        }
+        let currentCluster =
+          savedId
+            ? clusters.find(
+                (cluster) =>
+                  cluster.id === savedId,
+              ) ?? null
+            : null;
 
         /*
          * If there is no saved cluster,
-         * use the cluster marked current by
-         * the backend.
+         * fall back to the cluster marked
+         * current by the backend.
          */
         if (!currentCluster) {
           currentCluster =
@@ -126,41 +128,57 @@ export const useClusterStore =
         }
 
         /*
-         * Saved cluster no longer exists.
-         * Remove stale localStorage value.
+         * If the saved cluster no longer exists,
+         * remove the stale ID.
          */
-        if (!currentCluster && savedId) {
+        if (
+          savedId &&
+          !clusters.some(
+            (cluster) =>
+              cluster.id === savedId,
+          )
+        ) {
           localStorage.removeItem(
             STORAGE_KEY,
           );
         }
 
-        const updatedClusters =
-          clusters.map(
-            (cluster) => ({
-              ...cluster,
-              current:
-                cluster.id ===
-                currentCluster?.id,
-              status:
-                cluster.id === savedId
-                  ? "Connected"
-                  : cluster.status,
-            }),
+        /*
+         * If we found a current cluster but
+         * localStorage didn't have it, save it.
+         */
+        if (currentCluster) {
+          localStorage.setItem(
+            STORAGE_KEY,
+            currentCluster.id,
           );
+        }
 
-        const updatedCurrentCluster: Cluster | null =
-          currentCluster
-            ? {
-              ...currentCluster,
-              current: true,
-              status: "Connected",
-            }
-            : null;
+        const updatedClusters =
+          clusters.map((cluster) => ({
+            ...cluster,
+            current:
+              cluster.id ===
+              currentCluster?.id,
+            status:
+              cluster.id ===
+              currentCluster?.id
+                ? "Connected"
+                : cluster.status,
+          }));
 
         set({
           clusters: updatedClusters,
-          currentCluster: updatedCurrentCluster,
+
+          currentCluster:
+            currentCluster
+              ? {
+                  ...currentCluster,
+                  current: true,
+                  status: "Connected",
+                }
+              : null,
+
           loading: false,
         });
       } catch (error) {
@@ -194,25 +212,25 @@ export const useClusterStore =
         );
 
         const clusters =
-          get().clusters.map(
-            (item) => ({
-              ...item,
-              current:
-                item.id === cluster.id,
-              status:
-                item.id === cluster.id
-                  ? "Connected"
-                  : item.status,
-            }),
-          );
+          get().clusters.map((item) => ({
+            ...item,
+            current:
+              item.id === cluster.id,
+            status:
+              item.id === cluster.id
+                ? "Connected"
+                : item.status,
+          }));
 
         set({
           clusters,
+
           currentCluster: {
             ...cluster,
             current: true,
             status: "Connected",
           },
+
           loading: false,
         });
       } catch (error) {
@@ -245,22 +263,19 @@ export const useClusterStore =
           cluster.id,
         );
 
-        /*
-         * Refresh the cluster list so the
-         * newly created cluster gets all
-         * backend-generated information.
-         */
         const clusters =
           await clusterService.getClusters();
 
         const updatedClusters =
-          clusters.map(
-            (item) => ({
-              ...item,
-              current:
-                item.id === cluster.id,
-            }),
-          );
+          clusters.map((item) => ({
+            ...item,
+            current:
+              item.id === cluster.id,
+            status:
+              item.id === cluster.id
+                ? "Connected"
+                : item.status,
+          }));
 
         const current =
           updatedClusters.find(
@@ -270,10 +285,13 @@ export const useClusterStore =
 
         set({
           clusters: updatedClusters,
+
           currentCluster: {
             ...current,
             current: true,
+            status: "Connected",
           },
+
           loading: false,
         });
       } catch (error) {
@@ -300,11 +318,12 @@ export const useClusterStore =
           clusterId,
         );
 
-        if (
+        const wasCurrent =
           localStorage.getItem(
             STORAGE_KEY,
-          ) === clusterId
-        ) {
+          ) === clusterId;
+
+        if (wasCurrent) {
           localStorage.removeItem(
             STORAGE_KEY,
           );
@@ -329,6 +348,13 @@ export const useClusterStore =
           ) ??
           null;
 
+        if (currentCluster) {
+          localStorage.setItem(
+            STORAGE_KEY,
+            currentCluster.id,
+          );
+        }
+
         set({
           clusters: clusters.map(
             (cluster) => ({
@@ -336,9 +362,23 @@ export const useClusterStore =
               current:
                 cluster.id ===
                 currentCluster?.id,
+              status:
+                cluster.id ===
+                currentCluster?.id
+                  ? "Connected"
+                  : cluster.status,
             }),
           ),
-          currentCluster,
+
+          currentCluster:
+            currentCluster
+              ? {
+                  ...currentCluster,
+                  current: true,
+                  status: "Connected",
+                }
+              : null,
+
           loading: false,
         });
       } catch (error) {

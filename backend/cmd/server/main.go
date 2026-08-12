@@ -10,6 +10,7 @@ import (
 	"github.com/rohIta-k/k8lab/backend/internal/cluster"
 	"github.com/rohIta-k/k8lab/backend/internal/config"
 	"github.com/rohIta-k/k8lab/backend/internal/database"
+	"github.com/rohIta-k/k8lab/backend/internal/resource"
 )
 
 func cors(next http.Handler) http.Handler {
@@ -70,7 +71,11 @@ func main() {
 		cluster.NewService(
 			activityService,
 		)
-	router := api.NewRouter(clusterService)
+	resourceService := resource.NewService(
+		clusterService,
+		activityService,
+	)
+	router := api.NewRouter(clusterService, resourceService)
 	handler := cors(router)
 
 	server := &http.Server{

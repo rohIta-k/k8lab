@@ -1,10 +1,6 @@
-import type {
-  ResourceType,
-} from "../types/resources";
+import type { ResourceType } from "../types/resources";
 
-import type {
-  TableColumn,
-} from "../types/ui";
+import type { TableColumn } from "../types/ui";
 
 export const RESOURCE_COLUMNS: Record<
   ResourceType,
@@ -18,10 +14,6 @@ export const RESOURCE_COLUMNS: Record<
     {
       id: "status",
       label: "Status",
-    },
-    {
-      id: "age",
-      label: "Age",
     },
   ],
 
@@ -39,16 +31,20 @@ export const RESOURCE_COLUMNS: Record<
       label: "Status",
     },
     {
-      id: "node",
+      id: "fields.ready",
+      label: "Ready",
+    },
+    {
+      id: "fields.node",
       label: "Node",
     },
     {
-      id: "restartCount",
+      id: "fields.restartCount",
       label: "Restarts",
     },
     {
-      id: "age",
-      label: "Age",
+      id: "fields.image",
+      label: "Image",
     },
   ],
 
@@ -62,20 +58,24 @@ export const RESOURCE_COLUMNS: Record<
       label: "Namespace",
     },
     {
-      id: "ready",
+      id: "status",
+      label: "Status",
+    },
+    {
+      id: "fields.ready",
       label: "Ready",
     },
     {
-      id: "replicas",
+      id: "fields.replicas",
       label: "Replicas",
     },
     {
-      id: "image",
+      id: "fields.image",
       label: "Image",
     },
     {
-      id: "age",
-      label: "Age",
+      id: "fields.strategy",
+      label: "Strategy",
     },
   ],
 
@@ -89,16 +89,16 @@ export const RESOURCE_COLUMNS: Record<
       label: "Namespace",
     },
     {
-      id: "ready",
+      id: "status",
+      label: "Status",
+    },
+    {
+      id: "fields.ready",
       label: "Ready",
     },
     {
-      id: "owner",
+      id: "fields.owner",
       label: "Owner",
-    },
-    {
-      id: "age",
-      label: "Age",
     },
   ],
 
@@ -112,20 +112,16 @@ export const RESOURCE_COLUMNS: Record<
       label: "Namespace",
     },
     {
-      id: "type",
+      id: "fields.type",
       label: "Type",
     },
     {
-      id: "clusterIP",
+      id: "fields.clusterIP",
       label: "Cluster IP",
     },
     {
-      id: "ports",
+      id: "fields.ports",
       label: "Ports",
-    },
-    {
-      id: "age",
-      label: "Age",
     },
   ],
 
@@ -139,16 +135,12 @@ export const RESOURCE_COLUMNS: Record<
       label: "Namespace",
     },
     {
-      id: "host",
-      label: "Host",
+      id: "status",
+      label: "Status",
     },
     {
-      id: "service",
-      label: "Service",
-    },
-    {
-      id: "age",
-      label: "Age",
+      id: "fields.hosts",
+      label: "Hosts",
     },
   ],
 
@@ -162,31 +154,8 @@ export const RESOURCE_COLUMNS: Record<
       label: "Namespace",
     },
     {
-      id: "mountedInto",
-      label: "Mounted Into",
-    },
-    {
-      id: "age",
-      label: "Age",
-    },
-  ],
-
-  secrets: [
-    {
-      id: "name",
-      label: "Name",
-    },
-    {
-      id: "namespace",
-      label: "Namespace",
-    },
-    {
-      id: "type",
-      label: "Type",
-    },
-    {
-      id: "age",
-      label: "Age",
+      id: "fields.keys",
+      label: "Keys",
     },
   ],
 
@@ -204,12 +173,8 @@ export const RESOURCE_COLUMNS: Record<
       label: "Status",
     },
     {
-      id: "capacity",
+      id: "fields.capacity",
       label: "Capacity",
-    },
-    {
-      id: "age",
-      label: "Age",
     },
   ],
 
@@ -227,12 +192,12 @@ export const RESOURCE_COLUMNS: Record<
       label: "Status",
     },
     {
-      id: "completions",
+      id: "fields.completions",
       label: "Completions",
     },
     {
-      id: "age",
-      label: "Age",
+      id: "fields.image",
+      label: "Image",
     },
   ],
 
@@ -246,7 +211,7 @@ export const RESOURCE_COLUMNS: Record<
       label: "Namespace",
     },
     {
-      id: "schedule",
+      id: "fields.schedule",
       label: "Schedule",
     },
     {
@@ -254,8 +219,8 @@ export const RESOURCE_COLUMNS: Record<
       label: "Status",
     },
     {
-      id: "age",
-      label: "Age",
+      id: "fields.image",
+      label: "Image",
     },
   ],
 };

@@ -6,29 +6,38 @@ import { RESOURCE_COLUMNS } from "../../constants/tableColumns";
 
 import { useResources } from "../../hooks";
 
-import type { Resource } from "../../types/resources";
+import type {
+  Resource,
+} from "../../types/resources";
 
-export default function ResourceTable() {
+interface ResourceTableProps {
+  resources: Resource[];
+  onRowClick?: (resource: Resource) => void;
+}
+
+export default function ResourceTable({
+  resources,
+  onRowClick,
+}: ResourceTableProps) {
   const {
-    resources,
     selectedResourceType,
     setSelectedResource,
   } = useResources();
 
   const columns =
-    RESOURCE_COLUMNS[selectedResourceType];
-
-  const data =
-    resources[selectedResourceType] as Resource[];
+    RESOURCE_COLUMNS[
+      selectedResourceType
+    ];
 
   return (
     <Table<Resource>
       columns={columns}
-      data={data}
+      data={resources}
       getRowKey={(row) => row.id}
-      onRowClick={(row) =>
-        setSelectedResource(row.id)
-      }
+      onRowClick={(row) => {
+        setSelectedResource(row.id);
+        onRowClick?.(row);
+      }}
       renderCell={(row, column) => (
         <ResourceRow
           resource={row}

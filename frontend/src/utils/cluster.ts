@@ -12,9 +12,6 @@ export function getProviderLabel(provider: ClusterProvider): string {
     case "minikube":
       return "Minikube";
 
-    case "k3d":
-      return "K3d";
-
     default:
       return provider;
   }

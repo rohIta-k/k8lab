@@ -11,75 +11,198 @@ interface OverviewCardProps {
 export default function OverviewCard({
   resource,
 }: OverviewCardProps) {
-  return (
-    <Card>
-      <h3 className="mb-5 text-base font-semibold text-[var(--text-primary)]">
-        Overview
-      </h3>
+  const fields = resource.fields;
 
-      <div className="space-y-4">
-        {"status" in resource && (
+  return (
+    <Card className="!p-2 shadow-none">
+      <div className="flex items-center justify-between border-b border-[var(--border-color)] px-4 py-3">
+        <h3 className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+          Overview
+        </h3>
+      </div>
+
+      <div className="space-y-3 p-4">
+        <OverviewRow
+          label="Status"
+          value={
+            <StatusChip
+              status={resource.status}
+            />
+          }
+        />
+
+        <OverviewRow
+          label="Resource"
+          value={formatResourceType(
+            resource.type
+          )}
+        />
+
+        {resource.namespace && (
           <OverviewRow
-            label="Status"
-            value={
-              <StatusChip status={resource.status} />
-            }
+            label="Namespace"
+            value={resource.namespace}
           />
         )}
 
-        {"labels" in resource && (
+        {"labels" in fields && (
           <OverviewRow
             label="Labels"
             value={
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(resource.labels).map(
-                  ([key, value]) => (
-                    <Badge
-                      key={key}
-                      variant="secondary"
-                    >
-                      {key}={value}
-                    </Badge>
+              <div className="flex flex-wrap justify-end gap-2">
+                {Object.entries(
+                  fields.labels
+                ).length > 0 ? (
+                  Object.entries(
+                    fields.labels
+                  ).map(
+                    ([key, value]) => (
+                      <Badge
+                        key={key}
+                        variant="secondary"
+                      >
+                        {key}={value}
+                      </Badge>
+                    )
                   )
+                ) : (
+                  <span className="text-[var(--text-muted)]">
+                    None
+                  </span>
                 )}
               </div>
             }
           />
         )}
 
-        {"image" in resource && (
+        {"ready" in fields && (
           <OverviewRow
-            label="Image"
-            value={resource.image}
+            label="Ready"
+            value={fields.ready}
           />
         )}
 
-        {"replicas" in resource && (
+        {"replicas" in fields && (
           <OverviewRow
             label="Replicas"
-            value={resource.replicas.toString()}
+            value={fields.replicas.toString()}
           />
         )}
 
-        {"strategy" in resource && (
+        {"image" in fields && (
+          <OverviewRow
+            label="Image"
+            value={fields.image}
+          />
+        )}
+
+        {"strategy" in fields && (
           <OverviewRow
             label="Strategy"
-            value={resource.strategy}
+            value={fields.strategy}
           />
         )}
 
-        {"type" in resource &&
-          typeof resource.type === "string" && (
-            <OverviewRow
-              label="Type"
-              value={resource.type}
-            />
-          )}
+        {"owner" in fields && (
+          <OverviewRow
+            label="Owner"
+            value={
+              fields.owner || "-"
+            }
+          />
+        )}
 
-        <OverviewRow
-          label="Age"
-          value={resource.age}
-        />
+        {"restartCount" in fields && (
+          <OverviewRow
+            label="Restarts"
+            value={fields.restartCount.toString()}
+          />
+        )}
+
+        {"node" in fields && (
+          <OverviewRow
+            label="Node"
+            value={fields.node || "-"}
+          />
+        )}
+
+        {"ip" in fields && (
+          <OverviewRow
+            label="IP"
+            value={fields.ip || "-"}
+          />
+        )}
+
+        {"type" in fields && (
+          <OverviewRow
+            label="Type"
+            value={String(fields.type)}
+          />
+        )}
+
+        {"clusterIP" in fields && (
+          <OverviewRow
+            label="Cluster IP"
+            value={fields.clusterIP}
+          />
+        )}
+
+        {"ports" in fields && (
+          <OverviewRow
+            label="Ports"
+            value={fields.ports.join(", ")}
+          />
+        )}
+
+        {"selector" in fields && (
+          <OverviewRow
+            label="Selector"
+            value={
+              formatLabels(
+                fields.selector
+              )
+            }
+          />
+        )}
+
+        {"keys" in fields && (
+          <OverviewRow
+            label="Keys"
+            value={fields.keys.toString()}
+          />
+        )}
+
+        {"hosts" in fields && (
+          <OverviewRow
+            label="Hosts"
+            value={
+              fields.hosts.length > 0
+                ? fields.hosts.join(", ")
+                : "-"
+            }
+          />
+        )}
+
+        {"capacity" in fields && (
+          <OverviewRow
+            label="Capacity"
+            value={fields.capacity}
+          />
+        )}
+
+        {"completions" in fields && (
+          <OverviewRow
+            label="Completions"
+            value={fields.completions}
+          />
+        )}
+
+        {"schedule" in fields && (
+          <OverviewRow
+            label="Schedule"
+            value={fields.schedule}
+          />
+        )}
       </div>
     </Card>
   );
@@ -95,14 +218,42 @@ function OverviewRow({
   value,
 }: OverviewRowProps) {
   return (
-    <div className="flex items-start justify-between gap-4">
-      <span className="text-sm text-[var(--text-muted)]">
+    <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+      <span className="min-w-0 break-words text-sm text-[var(--text-muted)]">
         {label}
       </span>
 
-      <div className="text-right text-sm text-[var(--text-primary)]">
+      <div className="min-w-0 max-w-full break-words text-right text-sm text-[var(--text-primary)]">
         {value}
       </div>
     </div>
   );
+}
+
+function formatLabels(
+  labels: Record<string, string>
+) {
+  const entries =
+    Object.entries(labels);
+
+  if (entries.length === 0) {
+    return "-";
+  }
+
+  return entries
+    .map(
+      ([key, value]) =>
+        `${key}=${value}`
+    )
+    .join(", ");
+}
+
+function formatResourceType(
+  type: string
+) {
+  return type
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (char) =>
+      char.toUpperCase()
+    );
 }

@@ -1,8 +1,20 @@
 import type {
   ResourceStatus,
   ServiceType,
-  SecretType,
 } from "../types/resources";
+
+import {
+  Boxes,
+  BriefcaseBusiness,
+  Clock3,
+  Database,
+  FileText,
+  Folder,
+  Network,
+  Route,
+  Rows3,
+  Square,
+} from "lucide-react";
 
 export const RESOURCE_STATUS: ResourceStatus[] = [
   "Running",
@@ -23,51 +35,75 @@ export const SERVICE_TYPES: ServiceType[] = [
   "ExternalName",
 ];
 
-export const SECRET_TYPES: SecretType[] = [
-  "Opaque",
-  "kubernetes.io/tls",
-  "kubernetes.io/dockerconfigjson",
-];
-
 export const RESOURCE_GROUPS = [
   {
     title: "Workloads",
-    resources: [
-      "Deployment",
-      "ReplicaSet",
-      "Pod",
-      "Job",
-      "CronJob",
+    items: [
+      {
+        id: "deployments",
+        label: "Deployments",
+        icon: Boxes,
+      },
+      {
+        id: "pods",
+        label: "Pods",
+        icon: Square,
+      },
+      {
+        id: "replicaSets",
+        label: "ReplicaSets",
+        icon: Rows3,
+      },
+      {
+        id: "jobs",
+        label: "Jobs",
+        icon: BriefcaseBusiness,
+      },
+      {
+        id: "cronJobs",
+        label: "CronJobs",
+        icon: Clock3,
+      },
     ],
   },
-
   {
-    title: "Networking",
-    resources: [
-      "Service",
-      "Ingress",
+    title: "Network",
+    items: [
+      {
+        id: "services",
+        label: "Services",
+        icon: Network,
+      },
+      {
+        id: "ingresses",
+        label: "Ingresses",
+        icon: Route,
+      },
     ],
   },
-
   {
-    title: "Configuration",
-    resources: [
-      "ConfigMap",
-      "Secret",
+    title: "Config & Storage",
+    items: [
+      {
+        id: "configMaps",
+        label: "ConfigMaps",
+        icon: FileText,
+      },
+      {
+        id: "persistentVolumeClaims",
+        label: "PVCs",
+        icon: Database,
+      },
     ],
   },
-
-  {
-    title: "Storage",
-    resources: [
-      "PersistentVolumeClaim",
-    ],
-  },
-
   {
     title: "Cluster",
-    resources: [
-      "Namespace",
+    items: [
+      {
+        id: "namespaces",
+        label: "Namespaces",
+        icon: Folder,
+      },
     ],
   },
 ] as const;
@@ -77,7 +113,6 @@ export const CREATABLE_RESOURCES = [
   "Deployment",
   "Service",
   "ConfigMap",
-  "Secret",
 ] as const;
 
 export const RESOURCE_TABS = [
@@ -108,10 +143,6 @@ export const RESOURCE_TABS = [
   {
     id: "configMaps",
     label: "ConfigMaps",
-  },
-  {
-    id: "secrets",
-    label: "Secrets",
   },
   {
     id: "persistentVolumeClaims",
