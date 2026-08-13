@@ -11,26 +11,37 @@
 
 # K8lab
 
-> **A visual Kubernetes lab for understanding and experimenting with
-> Kubernetes without having to live in `kubectl`.**
+> **A visual Kubernetes lab for inspecting cluster state, understanding
+> resource relationships, and reproducing Kubernetes failure scenarios.**
 
-K8lab is a small Kubernetes visualization and experimentation platform
-built around a simple idea: **abstract the operational complexity of
-Kubernetes into a clear, visual interface**. Instead of switching
-between commands, YAML manifests, and multiple terminal outputs, k8lab
-brings cluster resources, relationships, experiments, status, and
-activity into one dashboard.
+K8lab is a Kubernetes visualization and experimentation platform that
+provides a higher-level interface over the Kubernetes API.
+
+It brings resource inspection, topology visualization, workload state,
+experiment execution, logs, and operational activity into a single
+interface, while keeping the underlying Kubernetes objects and their
+behaviour visible.
+
+The project is designed around a simple idea: **make Kubernetes
+behaviour observable and reproducible without requiring every interaction
+to begin with a `kubectl` command.**
 
 ------------------------------------------------------------------------
 
 
 ## 🎯 Why I Built This
 
-I wanted to build a **visualization and experimentation platform for Kubernetes** that makes complex cluster behaviour easier to understand.  
-Debugging often means jumping between commands, YAML, events, and logs, making it difficult to connect what is happening across resources.  
-K8lab brings these pieces together so you can **visualize resources, understand their relationships, inspect failures, and reproduce common Kubernetes scenarios**.  
-The goal is to make Kubernetes behaviour easier to see, reason about, and experiment with.
+Working with Kubernetes often requires correlating information from
+multiple sources: resource specifications, object relationships,
+container states, events, logs, and controller behaviour.
 
+K8lab provides a visual layer over these primitives so that this
+information can be inspected together rather than reconstructed manually
+from individual commands.
+
+The experimentation layer extends this further by allowing common
+Kubernetes failure modes to be reproduced on demand, making the resulting Kubernetes state
+directly observable.
 
 ------------------------------------------------------------------------
 
@@ -41,106 +52,116 @@ The goal is to make Kubernetes behaviour easier to see, reason about, and experi
 
 ------------------------------------------------------------------------
 
-##  What K8lab does
+## Core Capabilities
 
-K8lab provides a single interface for working with a Kubernetes cluster:
+### Cluster Management
 
--   Connect to and manage clusters
--   Browse Kubernetes resources without manually constructing `kubectl`
-    commands
--   Inspect resource details and YAML
--   Visualize relationships between Kubernetes objects
--   Run predefined failure and lifecycle experiments
--   Monitor experiment status and Kubernetes logs
--   Track important actions and events through a recent activity feed
+- Connect to configured Kubernetes clusters
+- Switch between available clusters
+- View cluster health and workload statistics
+- Inspect cluster-level activity
+- Use the selected cluster as the execution context for resource and experiment operations
 
-------------------------------------------------------------------------
+### Resource Explorer
 
-##  Pages
+The Resources page provides an inventory view over Kubernetes objects.
 
-### Dashboard
+- Browse workloads and Kubernetes resources
+- Filter resources by resource type
+- Inspect resource metadata and status
+- View detailed resource information
+- Inspect generated YAML representations
+- Delete resources directly from the interface
 
-The dashboard gives a quick overview of the connected cluster.
+### Topology Visualization
 
--   Cluster selection and connection status
--   Cluster health overview
--   Resource and workload statistics
--   Recent activity
--   Quick actions for common operations
+The topology service transforms Kubernetes resources into a graph representation consumed by the frontend.
 
-### Resources
+Relationships between resources such as:
 
-The Resources page provides an inventory-style view of Kubernetes
-objects.
+```text
+Node
+  └── Deployment
+        └── ReplicaSet
+              └── Pod
+                    └── Container
+```
 
--   Browse workloads and Kubernetes resources
--   Filter resources by type
--   View resource status and metadata
--   Open detailed resource information
--   Inspect the generated YAML representation
--   Delete resources when required
+can be explored visually alongside networking resources such as Services and Ingresses.
 
-### Topology
+The frontend uses React Flow to provide interactive graph navigation
 
-The Topology page turns Kubernetes relationships into a visual graph.
+### Kubernetes Experiments
 
--   Visualize relationships between resources
--   Display nodes such as Deployments, Pods, Services, Ingresses, and
-    cluster Nodes
--   Filter resource types from the legend
--   Zoom, pan, and fit the graph
+The experiment subsystem provides reproducible scenarios for common Kubernetes lifecycle and scheduling failures.
+
+| Experiment | Kubernetes behaviour |
+|---|---|
+| **CrashLoopBackOff** | Container repeatedly terminates and is restarted |
+| **ImagePullBackOff** | Container image cannot be pulled |
+| **OOMKilled** | Container exceeds its memory limit |
+| **Pending Pod** | Pod cannot be scheduled due to resource requirements |
+| **Failed Liveness Probe** | Kubelet repeatedly restarts an unhealthy container |
 
 
-### Experiments
+Each execution receives a unique `runID` and is associated with the target cluster and experiment.
 
-The Experiments page provides predefined Kubernetes failure scenarios.
+The backend uses Kubernetes labels to isolate resources belonging to a particular execution:
 
-Current scenarios include:
+```text
+k8lab.io/experiment=<experiment-id>
+k8lab.io/run=<run-id>
+```
 
--   **CrashLoopBackOff** --- repeatedly crashes a container
--   **ImagePullBackOff** --- uses an invalid container image
--   **OOMKilled** --- exceeds a configured memory limit
--   **Pending Pod** --- requests resources that cannot currently be
-    scheduled
--   **Failed Liveness Probe** --- intentionally fails a health check
+This allows resources created by different experiment runs to be identified, monitored, stopped, and removed independently.
 
-Each experiment shows:
+### Live Experiment Observability
 
--   Description
--   Difficulty
--   Estimated execution time
--   Resources involved
--   Configuration
--   Expected Kubernetes state
+Experiment execution is asynchronous. The backend creates the Kubernetes resources and immediately returns an `ExperimentRun`. The frontend then polls the logs endpoint while the experiment is active.
 
-When an experiment starts, K8lab creates the required Kubernetes
-resources and tracks the run using a unique run ID.
+The returned log stream combines:
 
-The frontend polls the backend for the latest state and logs, combining
-**custom experiment messages with raw Kubernetes container logs**.
+- **Experiment-level messages** generated by the backend
+- **Raw Kubernetes container logs** retrieved through the Kubernetes API
 
-------------------------------------------------------------------------
+Polling stops automatically when the run reaches a terminal state.
+
+### Activities Storage
+
+Important operations are recorded through the activity service rather than directly writing to the database from individual handlers.
+
+```text
+Cluster operation
+       ↓
+Domain Service
+       ↓
+recordActivity()
+       ↓
+Activity Service
+       ↓
+MySQL
+```
+
+This provides a consistent activity trail for cluster operations, resource operations, and experiment lifecycle events.
 
 ## 🏗️ Architecture
 
-K8lab follows a simple frontend → API → service → Kubernetes
-architecture.
-The backend is written in Go using the standard `net/http` server and
-Kubernetes `client-go`.
+K8lab follows a layered frontend → API → service → infrastructure architecture.
 
-``` mermaid
+```mermaid
 flowchart LR
     User[User]
 
-    subgraph Frontend["React + Vite Frontend"]
-        UI[Dashboard UI]
+    subgraph Frontend["React + Vite"]
+        UI[React UI]
         Store[Zustand Store]
+        Hooks[Custom Hooks]
         Services[API Services]
     end
 
     subgraph Backend["Go Backend"]
         Router[HTTP Router]
-
+        Handlers[HTTP Handlers]
         Cluster[Cluster Service]
         Resource[Resource Service]
         Topology[Topology Service]
@@ -148,18 +169,20 @@ flowchart LR
         Activity[Activity Service]
     end
 
-    K8s[(Kubernetes Cluster)]
+    K8s[(Kubernetes API)]
     MySQL[(MySQL)]
 
     User --> UI
-    UI --> Store
+    UI --> Hooks
+    Hooks --> Store
     Store --> Services
     Services --> Router
+    Router --> Handlers
 
-    Router --> Cluster
-    Router --> Resource
-    Router --> Topology
-    Router --> Experiment
+    Handlers --> Cluster
+    Handlers --> Resource
+    Handlers --> Topology
+    Handlers --> Experiment
 
     Cluster --> K8s
     Resource --> K8s
@@ -174,14 +197,14 @@ flowchart LR
     Activity --> MySQL
 ```
 
-### Request flow
+### Request Flow
 
-A typical resource request follows this path:
-
-``` text
+```text
 React Component
       ↓
-Zustand / Hook
+Custom Hook
+      ↓
+Zustand Store
       ↓
 Frontend Service
       ↓
@@ -194,28 +217,14 @@ Kubernetes client-go
 Kubernetes API Server
 ```
 
-For persistent activity:
+### Experiment Execution Flow
 
-``` text
-Action
-  ↓
-Service
-  ↓
-RecordActivity()
-  ↓
-Activity Service
-  ↓
-MySQL
-```
-
-### Experiment flow
-
-Experiments use a slightly different lifecycle:
-
-``` text
+```text
 Start Experiment
       ↓
-POST /experiments/{experimentId}/run
+POST /api/clusters/{clusterId}/experiments/{experimentId}/run
+      ↓
+Experiment Service
       ↓
 Create ExperimentRun
       ↓
@@ -223,7 +232,11 @@ KubernetesRunner.Run()
       ↓
 Create Kubernetes resources
       ↓
-Frontend polls logs endpoint
+Return runID
+      ↓
+Frontend polling
+      ↓
+GET /api/clusters/{clusterId}/experiments/runs/{runId}/logs
       ↓
 ExperimentService.GetLogs()
       ↓
@@ -231,7 +244,7 @@ KubernetesRunner.Logs()
       ↓
 Kubernetes API
       ↓
-Status + custom logs + pod logs
+Status + experiment messages + pod logs
       ↓
 Frontend
 ```
@@ -301,7 +314,7 @@ k8lab/
 
 ------------------------------------------------------------------------
 
-## 🚀 Setup Instructions
+## 🚀 Setup 
 
 ### Prerequisites
 
@@ -318,7 +331,7 @@ git clone <repository-url>
 cd k8lab
 ```
 
-### 2. Configure the backend
+### 2. Configure MYSQL
 
 Set the MySQL connection string:
 
@@ -329,16 +342,11 @@ export K8LAB_MYSQL_DSN="user:password@tcp(localhost:3306)/k8lab?parseTime=true"
 The Kubernetes client uses the available kubeconfig / cluster
 configuration to connect to the target cluster.
 
-### 3. Install frontend dependencies
+### 3. Install frontend dependencies and start frontend
 
 ``` bash
 cd frontend
 npm install
-```
-
-### 4. Start the frontend
-
-``` bash
 npm run dev
 ```
 
@@ -348,7 +356,7 @@ Frontend:
 http://localhost:5173
 ```
 
-### 5. Start the backend
+### 5. Start backend
 
 In another terminal:
 
@@ -372,5 +380,11 @@ make frontend
 make backend
 make build
 ```
+
+---
+
+<p align="center">
+  Built with React, Go, Kubernetes, and a lot of <code>kubectl</code> debugging.
+</p>
 
 
