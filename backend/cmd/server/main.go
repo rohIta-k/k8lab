@@ -10,6 +10,7 @@ import (
 	"github.com/rohIta-k/k8lab/backend/internal/cluster"
 	"github.com/rohIta-k/k8lab/backend/internal/config"
 	"github.com/rohIta-k/k8lab/backend/internal/database"
+	"github.com/rohIta-k/k8lab/backend/internal/experiment"
 	"github.com/rohIta-k/k8lab/backend/internal/resource"
 	"github.com/rohIta-k/k8lab/backend/internal/topology"
 )
@@ -83,11 +84,18 @@ func main() {
 		topology.NewService(
 			clusterService,
 		)
+	experimentService :=
+		experiment.NewService(
+			clusterService,
+			activityService,
+			experiment.NewRunner(clusterService),
+		)
 
 	router := api.NewRouter(
 		clusterService,
 		resourceService,
 		topologyService,
+		experimentService,
 	)
 
 	handler := cors(router)

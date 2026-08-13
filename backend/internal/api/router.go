@@ -5,6 +5,7 @@ import (
 
 	"github.com/rohIta-k/k8lab/backend/internal/api/handlers"
 	"github.com/rohIta-k/k8lab/backend/internal/cluster"
+	"github.com/rohIta-k/k8lab/backend/internal/experiment"
 	"github.com/rohIta-k/k8lab/backend/internal/resource"
 	"github.com/rohIta-k/k8lab/backend/internal/topology"
 )
@@ -13,6 +14,7 @@ func NewRouter(
 	clusterService *cluster.Service,
 	resourceService *resource.Service,
 	topologyService *topology.Service,
+	experimentService *experiment.Service,
 ) http.Handler {
 	mux := http.NewServeMux()
 
@@ -20,6 +22,7 @@ func NewRouter(
 		handlers.NewClusterHandler(clusterService)
 	resourceHandler := handlers.NewResourceHandler(resourceService)
 	topologyHandler := handlers.NewTopologyHandler(topologyService)
+	experimentHandler := handlers.NewExperimentHandler(experimentService)
 
 	mux.HandleFunc(
 		"GET /api/clusters",
@@ -69,6 +72,33 @@ func NewRouter(
 	mux.HandleFunc(
 		"GET /api/clusters/{id}/topology",
 		topologyHandler.GetTopology,
+	)
+
+	// Experiments
+
+	mux.HandleFunc(
+		"GET /api/clusters/{id}/experiments/runs/active",
+		experimentHandler.GetActiveRun,
+	)
+
+	mux.HandleFunc(
+		"POST /api/clusters/{id}/experiments/{experimentId}/run",
+		experimentHandler.Run,
+	)
+
+	mux.HandleFunc(
+		"GET /api/clusters/{id}/experiments/runs/{runId}/logs",
+		experimentHandler.GetLogs,
+	)
+
+	mux.HandleFunc(
+		"POST /api/clusters/{id}/experiments/runs/{runId}/stop",
+		experimentHandler.Stop,
+	)
+
+	mux.HandleFunc(
+		"DELETE /api/clusters/{id}/experiments/runs/{runId}",
+		experimentHandler.Reset,
 	)
 
 	return mux

@@ -8,6 +8,8 @@ interface ExperimentCardProps {
 
   selected: boolean;
 
+  disabled?: boolean;
+
   onClick: () => void;
 }
 
@@ -20,20 +22,26 @@ const difficultyVariant = {
 export default function ExperimentCard({
   experiment,
   selected,
+  disabled = false,
   onClick,
 }: ExperimentCardProps) {
   return (
     <Card
-      onClick={onClick}
-      className={
+      onClick={disabled ? undefined : onClick}
+      className={[
         selected
           ? "border-[var(--primary)]"
-          : undefined
-      }
+          : undefined,
+        disabled
+          ? "cursor-not-allowed opacity-60"
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="text-base font-semibold text-[var(--text-primary)]">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="break-words text-base font-semibold text-[var(--text-primary)]">
             {experiment.name}
           </h3>
 
@@ -57,10 +65,12 @@ export default function ExperimentCard({
         {experiment.description}
       </p>
 
-      <div className="mt-5 flex items-center justify-between text-xs text-[var(--text-muted)]">
+      <div className="mt-5 flex items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
         <span>{experiment.estimatedTime}</span>
 
-        <span>{experiment.expectedState}</span>
+        <span className="text-right">
+          {experiment.expectedState}
+        </span>
       </div>
     </Card>
   );

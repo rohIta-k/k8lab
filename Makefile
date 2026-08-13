@@ -4,7 +4,7 @@ frontend:
 	$(MAKE) -C frontend dev
 
 backend:
-	@echo "Backend not implemented yet"
+	cd backend && go run .
 
 dev:
 	$(MAKE) frontend
