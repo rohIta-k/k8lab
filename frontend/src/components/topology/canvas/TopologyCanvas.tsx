@@ -2,24 +2,26 @@ import {
   Background,
   Controls,
   ReactFlow,
-  ReactFlowProvider,
 } from "reactflow";
 
 import "reactflow/dist/style.css";
 
-import { TOPOLOGY_NODE_CONFIG } from "../../../constants/topology";
+import {
+  TOPOLOGY_NODE_CONFIG,
+} from "../../../constants/topology";
 
 import { useTopology } from "../../../hooks";
 
-import TopologyMiniMap from "./TopologyMiniMap";
 import TopologyNode from "./TopologyNode";
 import TopologyEdge from "./TopologyEdge";
 
 const nodeTypes = Object.fromEntries(
-  Object.keys(TOPOLOGY_NODE_CONFIG).map((type) => [
-    type,
-    TopologyNode,
-  ])
+  Object.keys(TOPOLOGY_NODE_CONFIG).map(
+    (type) => [
+      type,
+      TopologyNode,
+    ]
+  )
 );
 
 const edgeTypes = {
@@ -29,15 +31,51 @@ const edgeTypes = {
 function Canvas() {
   const {
     topology,
+    displayFilters,
     setSelectedNode,
     setSelectedEdge,
     setZoom,
   } = useTopology();
 
+  const visibleNodes =
+    topology.nodes.filter((node) => {
+      const type =
+        node.type ?? "pod";
+
+      // Cluster should always remain visible.
+      if (type === "cluster") {
+        return true;
+      }
+
+      return (
+        displayFilters[
+          type as keyof typeof displayFilters
+        ] ?? true
+      );
+    });
+
+  const visibleNodeIds =
+    new Set(
+      visibleNodes.map(
+        (node) => node.id
+      )
+    );
+
+  const visibleEdges =
+    topology.edges.filter(
+      (edge) =>
+        visibleNodeIds.has(
+          edge.source
+        ) &&
+        visibleNodeIds.has(
+          edge.target
+        )
+    );
+
   return (
     <ReactFlow
-      nodes={topology.nodes}
-      edges={topology.edges}
+      nodes={visibleNodes}
+      edges={visibleEdges}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       fitView
@@ -56,14 +94,11 @@ function Canvas() {
       }
     >
       <Background />
-
       <Controls />
-
-      <TopologyMiniMap />
     </ReactFlow>
   );
 }
 
 export default function TopologyCanvas() {
-  return<Canvas />;
+  return <Canvas />;
 }

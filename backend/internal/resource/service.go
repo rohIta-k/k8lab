@@ -6,6 +6,7 @@ import (
 
 	"github.com/rohIta-k/k8lab/backend/internal/activity"
 	"github.com/rohIta-k/k8lab/backend/internal/cluster"
+	"github.com/rohIta-k/k8lab/backend/internal/kubernetes"
 )
 
 type Service struct {
@@ -28,7 +29,7 @@ func (s *Service) List(
 	clusterID string,
 	resourceType ResourceType,
 ) ([]Resource, error) {
-	client, err := newClient(
+	client, err := kubernetes.NewClient(
 		ctx,
 		clusterID,
 		s.clusterService,
@@ -88,7 +89,7 @@ func (s *Service) Create(
 		)
 	}
 
-	client, err := newClient(
+	client, err := kubernetes.NewClient(
 		ctx,
 		clusterID,
 		s.clusterService,
@@ -233,7 +234,7 @@ func (s *Service) Delete(
 		)
 	}
 
-	client, err := newClient(
+	client, err := kubernetes.NewClient(
 		ctx,
 		clusterID,
 		s.clusterService,

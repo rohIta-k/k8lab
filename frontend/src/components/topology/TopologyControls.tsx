@@ -4,6 +4,7 @@ import {
   Plus,
   RotateCcw,
 } from "lucide-react";
+
 import { useReactFlow } from "reactflow";
 
 import Button from "../common/Button";
@@ -29,6 +30,7 @@ export default function TopologyControls() {
       <Button
         variant="secondary"
         onClick={() => zoomIn()}
+        aria-label="Zoom in"
       >
         <Plus size={16} />
       </Button>
@@ -36,6 +38,7 @@ export default function TopologyControls() {
       <Button
         variant="secondary"
         onClick={() => zoomOut()}
+        aria-label="Zoom out"
       >
         <Minus size={16} />
       </Button>
@@ -43,6 +46,7 @@ export default function TopologyControls() {
       <Button
         variant="secondary"
         onClick={() => fitView()}
+        aria-label="Fit topology"
       >
         <Maximize size={16} />
       </Button>
@@ -50,6 +54,7 @@ export default function TopologyControls() {
       <Button
         variant="secondary"
         onClick={handleReset}
+        aria-label="Reset view"
       >
         <RotateCcw size={16} />
       </Button>

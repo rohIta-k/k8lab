@@ -6,17 +6,20 @@ import (
 	"github.com/rohIta-k/k8lab/backend/internal/api/handlers"
 	"github.com/rohIta-k/k8lab/backend/internal/cluster"
 	"github.com/rohIta-k/k8lab/backend/internal/resource"
+	"github.com/rohIta-k/k8lab/backend/internal/topology"
 )
 
 func NewRouter(
 	clusterService *cluster.Service,
 	resourceService *resource.Service,
+	topologyService *topology.Service,
 ) http.Handler {
 	mux := http.NewServeMux()
 
 	clusterHandler :=
 		handlers.NewClusterHandler(clusterService)
 	resourceHandler := handlers.NewResourceHandler(resourceService)
+	topologyHandler := handlers.NewTopologyHandler(topologyService)
 
 	mux.HandleFunc(
 		"GET /api/clusters",
@@ -61,6 +64,11 @@ func NewRouter(
 	mux.HandleFunc(
 		"DELETE /api/clusters/{id}/resources/{type}/{name}",
 		resourceHandler.DeleteResource,
+	)
+
+	mux.HandleFunc(
+		"GET /api/clusters/{id}/topology",
+		topologyHandler.GetTopology,
 	)
 
 	return mux

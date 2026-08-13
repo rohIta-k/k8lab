@@ -4,7 +4,9 @@ import {
   type NodeProps,
 } from "reactflow";
 
-import { TOPOLOGY_NODE_CONFIG } from "../../../constants/topology";
+import {
+  TOPOLOGY_NODE_CONFIG,
+} from "../../../constants/topology";
 
 export default function TopologyNode({
   type = "pod",
@@ -13,7 +15,8 @@ export default function TopologyNode({
   const config =
     TOPOLOGY_NODE_CONFIG[
       type as keyof typeof TOPOLOGY_NODE_CONFIG
-    ] ?? TOPOLOGY_NODE_CONFIG.pod;
+    ] ??
+    TOPOLOGY_NODE_CONFIG.pod;
 
   const Icon = config.icon;
 
@@ -25,14 +28,15 @@ export default function TopologyNode({
       />
 
       <div
-        className="min-w-[160px] rounded-[var(--radius-lg)] border bg-[var(--background-card)] p-4 shadow-[var(--shadow-md)] transition-all hover:shadow-[var(--shadow-lg)]"
+        className="min-w-[160px] max-w-[240px] rounded-[var(--radius-lg)] border bg-[var(--background-card)] p-4 shadow-[var(--shadow-md)] transition-all hover:shadow-[var(--shadow-lg)]"
         style={{
           borderColor: config.color,
+          borderWidth: config.borderWidth,
         }}
       >
         <div className="flex items-center gap-3">
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-lg"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
             style={{
               backgroundColor: `${config.color}20`,
             }}
@@ -46,12 +50,15 @@ export default function TopologyNode({
           </div>
 
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[var(--text-primary)]">
+            <p
+              className="break-words text-sm font-semibold text-[var(--text-primary)]"
+              title={data.label}
+            >
               {data.label}
             </p>
 
             {data.status && (
-              <p className="text-xs text-[var(--text-muted)]">
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
                 {data.status}
               </p>
             )}

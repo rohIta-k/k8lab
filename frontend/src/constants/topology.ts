@@ -3,7 +3,6 @@ import {
   Boxes,
   Cpu,
   HardDrive,
-  KeyRound,
   Network,
   Server,
 } from "lucide-react";
@@ -64,13 +63,6 @@ export const TOPOLOGY_NODE_CONFIG = {
     label: "ConfigMap",
     icon: HardDrive,
     color: COLORS.resources.configMap,
-    borderWidth: 2,
-  },
-
-  secret: {
-    label: "Secret",
-    icon: KeyRound,
-    color: COLORS.resources.secret,
     borderWidth: 2,
   },
 } as const;

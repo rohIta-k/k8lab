@@ -14,15 +14,17 @@ export default function TopologyEdge({
   targetY,
   sourcePosition,
   targetPosition,
+  animated,
 }: EdgeProps) {
-  const [path] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
-  });
+  const [path] =
+    getBezierPath({
+      sourceX,
+      sourceY,
+      targetX,
+      targetY,
+      sourcePosition,
+      targetPosition,
+    });
 
   return (
     <BaseEdge
@@ -31,6 +33,9 @@ export default function TopologyEdge({
       style={{
         stroke: COLORS.border.default,
         strokeWidth: 2,
+        strokeDasharray: animated
+          ? "6 4"
+          : undefined,
       }}
     />
   );

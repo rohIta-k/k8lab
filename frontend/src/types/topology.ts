@@ -1,4 +1,7 @@
-import type { Edge, Node } from "reactflow";
+import type {
+  Edge,
+  Node,
+} from "reactflow";
 
 export type TopologyNodeType =
   | "cluster"
@@ -8,21 +11,21 @@ export type TopologyNodeType =
   | "pod"
   | "service"
   | "ingress"
-  | "configMap"
-  | "secret";
+  | "configMap";
 
 export interface TopologyNodeData {
   label: string;
   status?: string;
 }
 
-export type TopologyNode = Node<TopologyNodeData>;
+export type TopologyNode =
+  Node<TopologyNodeData>;
 
 export type TopologyEdge = Edge;
 
 export interface TopologyGraph {
+  clusterId: string;
   clusterName: string;
-  namespace: string;
   nodes: TopologyNode[];
   edges: TopologyEdge[];
 }
@@ -37,3 +40,6 @@ export interface TopologyViewport {
   x: number;
   y: number;
 }
+
+export type TopologyDisplayFilters =
+  Record<TopologyNodeType, boolean>;

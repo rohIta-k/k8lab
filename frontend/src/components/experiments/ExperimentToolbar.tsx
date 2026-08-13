@@ -18,41 +18,32 @@ export default function ExperimentToolbar() {
     experimentState === "Running";
 
   return (
-    <div className="mb-6 flex items-center justify-between">
-      <div>
-        <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-          Experiments
-        </h2>
-
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Deploy Kubernetes debugging scenarios.
-        </p>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <Button variant="secondary">
-          <RefreshCw size={16} />
-          <span className="ml-2">Refresh</span>
-        </Button>
-
+    <div className="flex gap-3">
+      <Button
+        variant="primary"
+        disabled={!selectedExperiment}
+        className="flex-1 inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] bg-[var(--primary)] py-3 text-base font-semibold text-white hover:bg-[var(--primary-hover)]"
+      >
         {isRunning ? (
-          <Button variant="danger">
-            <Square size={16} />
-            <span className="ml-2">
-              Stop Experiment
-            </span>
-          </Button>
+          <>
+            <Square size={18} />
+            <span>Stop Experiment</span>
+          </>
         ) : (
-          <Button
-            disabled={!selectedExperiment}
-          >
-            <Play size={16} />
-            <span className="ml-2">
-              Run Experiment
-            </span>
-          </Button>
+          <>
+            <Play size={18} />
+            <span>Start Experiment</span>
+          </>
         )}
-      </div>
+      </Button>
+
+      <Button
+        variant="secondary"
+        className="flex-1 inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-color)] bg-[var(--background-card)] py-3 text-base font-semibold text-[var(--text-primary)] hover:bg-[var(--background-hover)]"
+      >
+        <RefreshCw size={18} />
+        <span>Reset</span>
+      </Button>
     </div>
   );
 }

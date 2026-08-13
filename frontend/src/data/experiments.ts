@@ -15,7 +15,7 @@ export const experimentsData: Experiment[] = [
 
     namespace: "default",
 
-    estimatedTime: "15 sec",
+    estimatedTime: "30 sec",
 
     resources: ["Deployment", "ReplicaSet", "Pod"],
 
@@ -43,7 +43,7 @@ export const experimentsData: Experiment[] = [
 
     namespace: "default",
 
-    estimatedTime: "10 sec",
+    estimatedTime: "30 sec",
 
     resources: ["Deployment", "Pod"],
 
@@ -70,7 +70,7 @@ export const experimentsData: Experiment[] = [
 
     namespace: "default",
 
-    estimatedTime: "20 sec",
+    estimatedTime: "30 sec",
 
     resources: ["Deployment", "Pod"],
 
@@ -96,7 +96,7 @@ export const experimentsData: Experiment[] = [
 
     namespace: "default",
 
-    estimatedTime: "15 sec",
+    estimatedTime: "30 sec",
 
     resources: ["Pod"],
 
@@ -122,7 +122,7 @@ export const experimentsData: Experiment[] = [
 
     namespace: "default",
 
-    estimatedTime: "20 sec",
+    estimatedTime: "45 sec",
 
     resources: ["Deployment", "Pod"],
 
