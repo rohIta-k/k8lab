@@ -331,18 +331,7 @@ git clone <repository-url>
 cd k8lab
 ```
 
-### 2. Configure MYSQL
-
-Set the MySQL connection string:
-
-``` bash
-export K8LAB_MYSQL_DSN="user:password@tcp(localhost:3306)/k8lab?parseTime=true"
-```
-
-The Kubernetes client uses the available kubeconfig / cluster
-configuration to connect to the target cluster.
-
-### 3. Install frontend dependencies and start frontend
+### 2. Install frontend dependencies and start frontend
 
 ``` bash
 cd frontend
@@ -356,16 +345,24 @@ Frontend:
 http://localhost:5173
 ```
 
-### 5. Start backend
+### 3. Configure and Start backend
 
 In another terminal:
 
 ``` bash
 cd backend
+##Set the MySQL connection string:
+export K8LAB_MYSQL_DSN="user:password@tcp(localhost:3306)/k8lab?parseTime=true"
+##Run database migrations
+##Create the database if it does not already exist:
+##The backend uses the available Kubernetes kubeconfig to connect to the target cluster.
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS k8lab;"
+##Apply the initial migration:
+mysql -u root -p k8lab < internal/database/migrations/001_create_activities.up.sql
 go run ./cmd/server
 ```
 
-Backend:
+Backend will be available at:
 
 ``` text
 http://localhost:8080
